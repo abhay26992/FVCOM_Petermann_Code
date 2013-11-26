@@ -90,6 +90,10 @@ if (ENABLE_DYE_RELEASE)
     set (MODS ${MODS} ${srcdir}/mod_dye.F)
 endif()
 
+if (ENABLE_TURBINES)
+    set (MODS ${MODS} ${srcdir}/mod_turbines.F)
+endif()
+
 set (MODS_W
 ${srcdir}/mod_main_wave.F
 ${srcdir}/swmod1.F

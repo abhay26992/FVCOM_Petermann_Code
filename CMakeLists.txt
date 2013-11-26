@@ -285,6 +285,12 @@ option(ENABLE_DEVELOP3 "DEVELOP3" OFF)
 option(ENABLE_DEVELOP4 "DEVELOP4" OFF)
 option(ENABLE_DEVELOP5 "DEVELOP5" OFF)
 
+#-------------------------------------------------------------------------
+#       EXTRA FRICTION FOR REPRESENTING TIDAL TURBINES
+#------------------------------------------------------------------------
+
+option(ENABLE_TURBINES "TURBINES" OFF)
+
 include(UseGlobalBuildTree)
 include(ConfigCompilerFlags)
 
@@ -519,6 +525,10 @@ endif()
 
 if(ENABLE_DEVELOP5)
     add_definitions(-DDEVELOP5)
+endif()
+
+if(ENABLE_TURBINES)
+    add_definitions(-DTURBINES)
 endif()
 
 include(ConfigProjectVersion)
