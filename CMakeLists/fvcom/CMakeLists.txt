@@ -16,7 +16,6 @@ ${srcdir}/mod_ncll.F
 ${srcdir}/mod_nctools.F
 ${srcdir}/mod_wd.F
 ${srcdir}/mod_sng.F
-${srcdir}/mod_heatflux.F
 ${srcdir}/mod_input.F
 ${srcdir}/mod_force.F
 ${srcdir}/mod_obcs.F
@@ -92,6 +91,24 @@ endif()
 
 if (ENABLE_TURBINES)
     set (MODS ${MODS} ${srcdir}/mod_turbines.F)
+endif()
+
+if (ENABLE_HEATING_CALCULATED)
+    set (MODS ${MODS} ${srcdir}/mod_heatflux.F)
+endif()
+
+if (ENABLE_FABM)
+    find_path(FABM_BASE src/fabm.F90 DOC "Path to FABM source directory."
+HINTS ~/fabm-git)
+    set(FABM_FORCED_HOST fvcom)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    if(ENABLE_DOUBLE_PRECISION)
+      set(FABM_REAL_KIND "SELECTED_REAL_KIND(12)")
+    else()
+      set(FABM_REAL_KIND "SELECTED_REAL_KIND(6)")
+    endif()
+    add_subdirectory(${FABM_BASE}/src fabm)
+    set (MODS ${MODS} ${srcdir}/mod_fabm_data.F ${srcdir}/mod_fabm_3D.F)
 endif()
 
 set (MODS_W
@@ -241,6 +258,11 @@ target_link_libraries(fvcom.bin
     ${LAPACK_LIBRARIES}
     ${NETCDF_LIBRARIES_F90}
     )
+
+if(ENABLE_FABM)
+  target_include_directories(fvcom PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/fabm/modules)
+  target_link_libraries(fvcom fabm)
+endif()
 
 install(TARGETS fvcom.bin fvcom
     RUNTIME DESTINATION bin

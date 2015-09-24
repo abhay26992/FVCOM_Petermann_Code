@@ -291,6 +291,14 @@ option(ENABLE_DEVELOP5 "DEVELOP5" OFF)
 
 option(ENABLE_TURBINES "TURBINES" OFF)
 
+#-------------------------------------------------------------------------
+#       SALT PRECIPITATION
+#-------------------------------------------------------------------------
+
+option(ENABLE_SALTLAKE "SALTLAKE" OFF)
+
+option(ENABLE_FABM "FABM" OFF)
+
 include(UseGlobalBuildTree)
 include(ConfigCompilerFlags)
 
@@ -529,6 +537,14 @@ endif()
 
 if(ENABLE_TURBINES)
     add_definitions(-DTURBINES)
+endif()
+
+if(ENABLE_SALTLAKE)
+    add_definitions(-DSALTLAKE)
+endif()
+
+if(ENABLE_FABM)
+    add_definitions(-DFABM)
 endif()
 
 include(ConfigProjectVersion)
