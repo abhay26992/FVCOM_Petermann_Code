@@ -98,8 +98,7 @@ if (ENABLE_HEATING_CALCULATED)
 endif()
 
 if (ENABLE_FABM)
-    find_path(FABM_BASE src/fabm.F90 DOC "Path to FABM source directory."
-HINTS ~/fabm-git)
+    find_path(FABM_BASE src/fabm.F90 DOC "Path to FABM source directory." HINTS ~/fabm-git)
     set(FABM_FORCED_HOST fvcom)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
     if(ENABLE_DOUBLE_PRECISION)
