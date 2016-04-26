@@ -213,6 +213,12 @@ option(ENABLE_ICE "ICE" OFF)
 
 option(ENABLE_HEATING_CALCULATED "HEATING_CALCULATED" OFF)
 
+#-------------------------------------------------------------------
+#    CALCULATE EVAPORATION
+#---------------------------------------------------------------
+
+option(ENABLE_EVAPORATION_CALCULATED "EVAPORATION_CALCULATED" OFF)
+
 #--------------------------------------------------------------------------
 #         AIR_PRESSURE FROM SURFACE FORCING                           
 #--------------------------------------------------------------------------
@@ -454,6 +460,10 @@ endif()
 
 if(ENABLE_HEATING_CALCULATED)
     add_definitions(-DHEATING_CALCULATED)
+endif()
+
+if(ENABLE_EVAPORATION_CALCULATED)
+    add_definitions(-DEVAPORATION_CALCULATED)
 endif()
 
 if(ENABLE_AIR_PRESSURE)
