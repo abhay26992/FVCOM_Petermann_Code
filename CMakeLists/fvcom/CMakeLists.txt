@@ -215,7 +215,7 @@ set (BIOGEN
     )
 
 include_directories(
-    ${NETCDF_INCLUDES}
+    ${NETCDF_INCLUDE_DIRS}
     ${JULIAN_INCLUDE_DIR}
     )
 
@@ -255,7 +255,7 @@ target_link_libraries(fvcom.bin
     ${FPROJ_LIBRARY}
     ${BLAS_LIBRARIES}
     ${LAPACK_LIBRARIES}
-    ${NETCDF_LIBRARIES_F90}
+    ${NETCDF_LIBRARIES}
     )
 
 if(ENABLE_FABM)
