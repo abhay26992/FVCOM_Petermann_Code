@@ -1,5 +1,6 @@
 set (srcdir ${FVCOM_ROOT}/FVCOM_source)
 set (MODS
+${srcdir}/mod_sparse_timeseries.F
 ${srcdir}/mod_prec.F
 ${srcdir}/sinter.F
 ${srcdir}/mod_types.F
