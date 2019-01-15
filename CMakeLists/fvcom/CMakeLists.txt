@@ -63,6 +63,7 @@ ${srcdir}/mod_probe.F
 ${srcdir}/mod_gotm.F
 ${srcdir}/mod_balance_2d.F
 ${srcdir}/mod_tridiag.F
+${srcdir}/mod_tvd.F
 ${srcdir}/mod_scal.F
 ${srcdir}/mod_meanflow.F
 ${srcdir}/mod_obcs2.F
