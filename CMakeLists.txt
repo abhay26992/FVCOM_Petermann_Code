@@ -261,6 +261,12 @@ option(ENABLE_WAVE_OFFLINE "WAVE_OFFLINE" OFF)
 option(ENABLE_THIN_DAM "THIN_DAM" OFF)
 
 #--------------------------------------------------------------------------
+#        TVD - FLUX LIMITED HORIZONTAL ADVECTION
+#--------------------------------------------------------------------------
+
+option(ENABLE_TVD "TVD" OFF)
+
+#--------------------------------------------------------------------------
 #        PWP MIXED LAYER MODEL:
 #--------------------------------------------------------------------------
 
@@ -511,6 +517,10 @@ endif()
 
 if(ENABLE_THIN_DAM)
     add_definitions(-DTHIN_DAM)
+endif()
+
+if(ENABLE_TVD)
+    add_definitions(-DTVD)
 endif()
 
 if(ENABLE_PWP)
