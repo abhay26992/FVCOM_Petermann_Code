@@ -1,0 +1,55 @@
+advave_edge_gcn.F:!old:           UAF(I) = UAF(I)-CC_SPONGE(I)*UAF(I)
+advave_edge_gcn.F:!old:           VAF(I) = VAF(I)-CC_SPONGE(I)*VAF(I)
+advave_edge_gcn.F:            UAF(I) = UAF(I)/(1.0_SP+CC_SPONGE(I)*UAF(I)**2.0_SP)
+advave_edge_gcn.F:            VAF(I) = VAF(I)/(1.0_SP+CC_SPONGE(I)*VAF(I)**2.0_SP)
+advave_edge_gcn.F:!old:           UAF(I) = UAF(I)-CC_SPONGE(I)*UAF(I)
+advave_edge_gcn.F:!old:           VAF(I) = VAF(I)-CC_SPONGE(I)*VAF(I)
+advave_edge_gcn.F:            UAF(I) = UAF(I)/(1.0_SP+CC_SPONGE(I)*UAF(I)**2.0_SP)
+advave_edge_gcn.F:            VAF(I) = VAF(I)/(1.0_SP+CC_SPONGE(I)*VAF(I)**2.0_SP)
+advave_edge_gcn.F:!old:           UAF(I) = UAF(I)-CC_SPONGE(I)*UAF(I)
+advave_edge_gcn.F:!old:           VAF(I) = VAF(I)-CC_SPONGE(I)*VAF(I)
+advave_edge_gcn.F:            UAF(I) = UAF(I)/(1.0_SP+CC_SPONGE(I)*UAF(I)**2.0_SP)
+advave_edge_gcn.F:            VAF(I) = VAF(I)/(1.0_SP+CC_SPONGE(I)*VAF(I)**2.0_SP)
+advave_edge_gcy.F:!old:           UAF(I) = UAF(I)-CC_SPONGE(I)*UAF(I)
+advave_edge_gcy.F:!old:           VAF(I) = VAF(I)-CC_SPONGE(I)*VAF(I)
+advave_edge_gcy.F:            UAF(I) = UAF(I)/(1.0_SP+CC_SPONGE(I)*UAF(I)**2.0_SP)
+advave_edge_gcy.F:            VAF(I) = VAF(I)/(1.0_SP+CC_SPONGE(I)*VAF(I)**2.0_SP)
+advave_edge_gcy.F:!old:           UAF(I) = UAF(I)-CC_SPONGE(I)*UAF(I)
+advave_edge_gcy.F:!old:           VAF(I) = VAF(I)-CC_SPONGE(I)*VAF(I)
+advave_edge_gcy.F:            UAF(I) = UAF(I)/(1.0_SP+CC_SPONGE(I)*UAF(I)**2.0_SP)
+advave_edge_gcy.F:            VAF(I) = VAF(I)/(1.0_SP+CC_SPONGE(I)*VAF(I)**2.0_SP)
+advave_edge_gcy.F:!old:           UAF(I) = UAF(I)-CC_SPONGE(I)*UAF(I)
+advave_edge_gcy.F:!old:           VAF(I) = VAF(I)-CC_SPONGE(I)*VAF(I)
+advave_edge_gcy.F:            UAF(I) = UAF(I)/(1.0_SP+CC_SPONGE(I)*UAF(I)**2.0_SP)
+advave_edge_gcy.F:            VAF(I) = VAF(I)/(1.0_SP+CC_SPONGE(I)*VAF(I)**2.0_SP)
+coords_n_const.F:     CALL LOAD_RESTART_SPONGE(CC_SPONGE) ! LOAD DIRECTLY
+coords_n_const.F:     CALL LOAD_RESTART_SPONGE(CC_SPONGE) ! LOAD DIRECTLY TO ALL_VARS:CC_SPONGE
+extuv_edge.F:!old:   UAF = UAF-CC_SPONGE*UAF
+extuv_edge.F:!old:   VAF = VAF-CC_SPONGE*VAF
+extuv_edge.F:   UAF = UAF/(1.0_SP+CC_SPONGE*UAF**2.0_SP)
+extuv_edge.F:   VAF = VAF/(1.0_SP+CC_SPONGE*VAF**2.0_SP)
+mod_fluid_mud.F:   UAF_FML = UAF_FML-CC_SPONGE*UAF_FML
+mod_fluid_mud.F:   VAF_FML = VAF_FML-CC_SPONGE*VAF_FML
+mod_input.F:    VAR => FIND_VAR(NC_START,'cc_sponge',FOUND)
+mod_input.F:    IF(.not. FOUND) CALL FATAL_ERROR("COULD NOT FIND VARIABLE 'cc_sponge'&
+mod_main.F:   REAL(SP), ALLOCATABLE,TARGET :: CC_SPONGE(:)     !!SPONGE DAMPING COEFFICIENT FOR MOMENTUM
+mod_main.F:   ALLOCATE(CC_SPONGE(0:NT))     ;CC_SPONGE = ZERO  !!SPONGE DAMPING COEFFICIENT FOR MOMENTUM
+mod_ncdio.F:       allocate(CC_SPONGE(NGL),stat=status)
+mod_ncdio.F:       IF (STATUS /=0 ) CALL FATAL_ERROR("COULD NOT ALLOCATE MEMORY ON IO PROC FOR OUTPUT DATA:CC_SPONGE")
+mod_ncdio.F:       CC_SPONGE = 0.0_SP
+mod_ncdio.F:    ! CC_SPONGE
+mod_ncdio.F:    VAR  => NC_MAKE_AVAR(name='cc_sponge',&
+mod_ncdio.F:         & values=cc_sponge, DIM1= DIM_nele)
+mod_semi_implicit.F:!old:  UAF = UAF-CC_SPONGE*UAF
+mod_semi_implicit.F:!old:  VAF = VAF-CC_SPONGE*VAF
+mod_semi_implicit.F:    UAF = UAF/(1.0_SP+CC_SPONGE*UAF**2.0_SP)
+mod_semi_implicit.F:    VAF = VAF/(1.0_SP+CC_SPONGE*VAF**2.0_SP)
+mod_setup.F:             CC_SPONGE(I)=MAX(C_SPONGE,CC_SPONGE(I))
+mod_setup.F:             CC_SPONGE(I)=MAX(C_SPONGE,CC_SPONGE(I))
+vdif_uv.F:!old:       UF(I,K) = UF(I,K)-CC_SPONGE(I)*UF(I,K)
+vdif_uv.F:!old:       VF(I,K) = VF(I,K)-CC_SPONGE(I)*VF(I,K)
+vdif_uv.F:        UF(I,K) = UF(I,K)/(1.0_SP+CC_SPONGE(I)*UF(I,K)**2.0_SP)
+vdif_uv.F:        VF(I,K) = VF(I,K)/(1.0_SP+CC_SPONGE(I)*VF(I,K)**2.0_SP)
+visitsim.F:     scalar = visitmdscalarcreate(handle, "CC_SPONGE", 9, "TWOD_Mesh", 8, VISIT_VARCENTERING_ZONE)
+visitsim.F:  elseif (visitstrcmp(name, lname, "CC_SPONGE",9).eq.0) then
+visitsim.F:     error  = visitscalarsetdata(handle, CC_SPONGE(1:NT), Vdims , 1 &
