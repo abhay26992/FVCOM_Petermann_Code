@@ -474,43 +474,40 @@ CONTAINS
   !=========================================================================!
   !                        RUN                                              !
   !=========================================================================!
-  SUBROUTINE    FVCOM_run(START_DATE_opt,END_DATE_opt)
+  SUBROUTINE FVCOM_run(START_DATE_opt,END_DATE_opt)
     INTEGER STATUS
     character(len=*),INTENT(IN),OPTIONAL :: START_DATE_opt, END_DATE_opt
-
+    
     TYPE(TIME) :: StartTime_sub
     TYPE(TIME) :: EndTime_sub
+    
+    ! These optional arguments specify how long to run FVCOM for during this RUN call.
+    ! The overwrite defaults obtained from the namelist file.
+    IF (PRESENT(START_DATE_opt).AND.PRESENT(END_DATE_opt)) THEN 
+       
+       ! translate the start and end times from character strings
+       StartTime_sub = READ_DATETIME(START_DATE_opt,DATE_FORMAT,TIMEZONE,status)
+       if (status == 0) &
+            & Call Fatal_Error("Could not read the substep date string START_DATE: "//trim(START_DATE_opt))
+       EndTime_sub = READ_DATETIME(END_DATE_opt,DATE_FORMAT,TIMEZONE,status)
+       if (status == 0) &
+            & Call Fatal_Error("Could not read the substep date string END_DATE: "//trim(END_DATE_opt))
 
-    IF (PRESENT(START_DATE_opt)) THEN ! thinf: compute coupled partial intergration period
+       ! SANITY CHECK                                                                                             
+       if (StartTime_sub .GT. EndTime_sub) &
+            & Call Fatal_Error("Runfile Start_Date exceeds or equal to End_Date")       
+       
+       ! IINT is FVCOM's global timestep counter
+       ISTART = IINT +1
+       
+       ! NSTEPS is the number of timesteps to implement during this RUN call.
+       NSTEPS = CALCULATE_NUMBER_OF_TIMESTEPS(StartTime_sub,EndTime_sub)
+       IEND = ISTART + NSTEPS   
 
-          ! GET THE FISOC SUBSTEP START TIME                                                                                       
-          StartTime_sub = READ_DATETIME(START_DATE_opt,DATE_FORMAT,TIMEZONE,status)
-          if (status == 0) &
-               & Call Fatal_Error("Could not read the FISOC substep date string START_DATE: "//trim(START_DATE_opt))
-
-          ! GET THE FISOC SUBSTEP END TIME                                                                                         
-          EndTime_sub = READ_DATETIME(END_DATE_opt,DATE_FORMAT,TIMEZONE,status)
-          if (status == 0) &
-               & Call Fatal_Error("Could not read the FISOC substep date string END_DATE: "&
-                      &//trim(END_DATE_opt))
-          ! SANITY CHECK                                                                                             
-          if(StartTime_sub .GT. EndTime_sub) &
-               & Call Fatal_Error("Runfile Start_Date exceeds or equal to End_Date")
-
-          
-          !! FIND THE START TIME IN THE RESTART FILE AND SET ISTART                                                           !     
-          !CALL SET_STARTUP_FILE_STACK(StartTime,IINT)
-          !
-          ! ADVANCE THE TO THE FIRST TIME STEP OF THE MODEL FROM THE                                                 
-          ! INITIAL CONDITION
-          ! thinf: reuse previous timestep
-          ISTART = IINT +1
-
-          !CALCULATE THE NUMBER OF STEPS AND IEND                                                                    
-          NSTEPS = CALCULATE_NUMBER_OF_TIMESTEPS(StartTime_sub,EndTime_sub)
-          IEND = ISTART + NSTEPS
-
-
+       ! SANITY CHECK                                                                                             
+    ELSE IF (PRESENT(START_DATE_opt).OR.PRESENT(END_DATE_opt)) THEN
+       CALL Fatal_Error("optional start and end dates must either both be present or neither")       
+       
     END IF
 
     !==============================================================================!
