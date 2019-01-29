@@ -131,11 +131,10 @@ $(EXEC):	$(FVCOM_OBJS)
 
 
 libfvcom: $(FVCOM_OBJS)
-	$(AR) $@.a $(FVCOM_OBJS)
-	$(RANLIB) $@.a
-
-#	$(FC) -shared -o $@.so $(FVCOM_OBJS)
+	$(FC) -shared -o $@.so $(FVCOM_OBJS)
 #       PROBLEMS WITH SHARED OPTION, REQUIRES -fPIC in All sub libraries as well when building on x86_64
+#	$(RANLIB) $@.a
+#	$(AR) $@.a $(FVCOM_OBJS)
 
 
 #--------------------------------------------------------------------------

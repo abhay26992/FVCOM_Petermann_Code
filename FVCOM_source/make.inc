@@ -551,7 +551,7 @@ dashL= $(empty) -L
          COMPILER = -DIFORT  
          CC       = mpicc
          CXX      = mpicxx
-         CFLAGS   = -O3 
+         CFLAGS   = -O3 -fPIC 
          FC       = mpif90
 #         DEBFLGS  = -check all -traceback
 # Use 'OPT = -O0 -g'  for fast compile to test the make 
@@ -609,8 +609,8 @@ dashL= $(empty) -L
 #==========================================================================
 #  END USER DEFINITION SECTION
 #==========================================================================
-         CPPFLAGS = $(DEF_FLAGS) $(COMPILER)
-         FFLAGS = $(DEBFLGS) $(OPT)
+         CPPFLAGS = $(DEF_FLAGS) $(COMPILER) -fPIC
+         FFLAGS = $(DEBFLGS) $(OPT) -fPIC
          MDEPFLAGS = --cpp --fext=f90 --file=-
          RANLIB = ranlib
          AR = ar rc
