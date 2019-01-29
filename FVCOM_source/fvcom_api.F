@@ -474,7 +474,44 @@ CONTAINS
   !=========================================================================!
   !                        RUN                                              !
   !=========================================================================!
-  SUBROUTINE    FVCOM_run
+  SUBROUTINE    FVCOM_run(START_DATE_opt,END_DATE_opt)
+    INTEGER STATUS
+    character(len=*),INTENT(IN),OPTIONAL :: START_DATE_opt, END_DATE_opt
+
+    TYPE(TIME) :: StartTime_sub
+    TYPE(TIME) :: EndTime_sub
+
+    IF (PRESENT(START_DATE_opt)) THEN ! thinf: compute coupled partial intergration period
+
+          ! GET THE FISOC SUBSTEP START TIME                                                                                       
+          StartTime_sub = READ_DATETIME(START_DATE_opt,DATE_FORMAT,TIMEZONE,status)
+          if (status == 0) &
+               & Call Fatal_Error("Could not read the FISOC substep date string START_DATE: "//trim(START_DATE_opt))
+
+          ! GET THE FISOC SUBSTEP END TIME                                                                                         
+          EndTime_sub = READ_DATETIME(END_DATE_opt,DATE_FORMAT,TIMEZONE,status)
+          if (status == 0) &
+               & Call Fatal_Error("Could not read the FISOC substep date string END_DATE: "&
+                      &//trim(END_DATE_opt))
+          ! SANITY CHECK                                                                                             
+          if(StartTime_sub .GT. EndTime_sub) &
+               & Call Fatal_Error("Runfile Start_Date exceeds or equal to End_Date")
+
+          
+          !! FIND THE START TIME IN THE RESTART FILE AND SET ISTART                                                           !     
+          !CALL SET_STARTUP_FILE_STACK(StartTime,IINT)
+          !
+          ! ADVANCE THE TO THE FIRST TIME STEP OF THE MODEL FROM THE                                                 
+          ! INITIAL CONDITION
+          ! thinf: reuse previous timestep
+          ISTART = IINT +1
+
+          !CALCULATE THE NUMBER OF STEPS AND IEND                                                                    
+          NSTEPS = CALCULATE_NUMBER_OF_TIMESTEPS(StartTime_sub,EndTime_sub)
+          IEND = ISTART + NSTEPS
+
+
+    END IF
 
     !==============================================================================!
     !  SELECT THE RUN MODE AND EXECUTE THE MAIN LOOP
