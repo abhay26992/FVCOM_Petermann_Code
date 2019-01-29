@@ -81,13 +81,13 @@ MODS  = mod_prec.F	sinter.F	mod_types.F	mod_time.F	\
 	mod_station_timeseries.F	mod_sparse_timeseries.F 	\
 	mod_boundschk.F mod_heatflux_gl.F	mod_esmf_nesting.F	\
 	mod_cstms_vars.F	mod_flocmod.F	mod_sed_cstms.F		\
-	mod_fluid_mud.F  mod_ocean_control.F 
+	mod_fluid_mud.F  fvcom_api.F  
 
 MODS_W = mod_main_wave.F	swmod1.F	swmod2.F	swmod3.F\
 	mod_action_im.F mod_action_ex.F mod_wavesetup.F 		\
 	mod_wave_current_interaction.F  mod_bbl.F
 
-MAIN  =	fvcom.F		genmap.F	tge.F		longshore_flow.F\
+MAIN  =	fvcom_driver.F		genmap.F	tge.F		longshore_flow.F\
 	cell_area.F 	open_all.F	load_grid.F	allocate_all.F	\
 	setup_domain.F	genmap_obc.F	genmap_lsf.F	print_vals.F    \
 	coords_n_const.F	shape_coef_gcn.F shape_coef_gcy.F	\
@@ -103,7 +103,7 @@ MAIN  =	fvcom.F		genmap.F	tge.F		longshore_flow.F\
 	vdif_ts.F	vdif_ts_gom.F	fct_s.F		bcond_ts.F	\
 	adjust_ts.F	conv_over.F	visitsim.F	startup_type.F	\
 	edge_len.F	adcor.F		icing.F		rho_pmean.F	\
-	calc_vort.F	namelist.F	nh_set_nesting.F
+	calc_vort.F	namelist.F	nh_set_nesting.F 
 
 MAIN_W = ocpmix.F	ocpcre.F	ocpids.F	\
 	swanpre1.F	swanpre2.F	swanser.F	swanmain.F	\
