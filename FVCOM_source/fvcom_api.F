@@ -505,6 +505,12 @@ CONTAINS
        NSTEPS = CALCULATE_NUMBER_OF_TIMESTEPS(StartTime_sub,EndTime_sub)
        IEND = ISTART + NSTEPS   
 
+! THINF TODO MELT AVERAGE
+! add ifdef iceshelf
+! initialize melt rate average variable further up in this subroutine and allocate it to yero here
+! sum this up after calling internal step
+! divide by NSTEP after main loop
+
        ! SANITY CHECK                                                                                             
     ELSE IF (PRESENT(START_DATE_opt).OR.PRESENT(END_DATE_opt)) THEN
        CALL Fatal_Error("optional start and end dates must either both be present or neither")       
