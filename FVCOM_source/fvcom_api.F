@@ -205,17 +205,16 @@ CONTAINS
     !==============================================================================!
     !   IMPORT CASENAME AND COMMAND LINE ARGUMENTS AND START LOG FILE              !
     !==============================================================================!
-    CALL COMMANDLINEIO(CVS_ID,CVS_Date,CVS_Name,CVS_Revision)       
-    if(DBG_SET(dbg_log)) Call WRITE_BANNER(PAR,NPROCS,MYID)
-
     IF (PRESENT(casename_opt)) THEN
        casename = casename_opt
+    ELSE
+       CALL COMMANDLINEIO(CVS_ID,CVS_Date,CVS_Name,CVS_Revision)       
     END IF
+    if(DBG_SET(dbg_log)) Call WRITE_BANNER(PAR,NPROCS,MYID)
 
     !==============================================================================!
     ! SET DEFAULT VALUES AND READ NAME LISTS                                            
     !==============================================================================!
-
     CALL NAMELIST
 
     !==============================================================================!
