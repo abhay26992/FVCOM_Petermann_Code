@@ -134,7 +134,22 @@ CONTAINS
     XCG(0) = 0.0_SP ; YCG(0) = 0.0_SP
 !------------------------------------------------------
 # endif
-    
+   
+
+# if defined (FVCOM_API)
+!------------------add by qin----------------------------
+   IF(.NOT.ALLOCATED(XG))  ALLOCATE(XG(0:MGL))
+   IF(.NOT.ALLOCATED(YG))  ALLOCATE(YG(0:MGL))
+# if defined (MULTIPROCESSOR)
+    IF(PAR)THEN
+      SENDER = MSRID -1
+      CALL MPI_BCAST(XG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
+      CALL MPI_BCAST(YG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
+    END IF
+# endif
+   XG(0) = 0.0_SP
+   YG(0) = 0.0_SP
+# endif
     !--------------CALCULATE GLOBAL ELEMENT CENTER GRID COORDINATES----------------!
     CALL N2E2D(VX,XC)
     CALL N2E2D(VY,YC)
@@ -267,6 +282,22 @@ CONTAINS
     XCG(0) = 0.0_SP ; YCG(0) = 0.0_SP
 !------------------------------------------------------
 # endif
+
+# if defined (FVCOM_API)
+!------------------add by qin----------------------------
+   IF(.NOT.ALLOCATED(XG))  ALLOCATE(XG(0:MGL))
+   IF(.NOT.ALLOCATED(YG))  ALLOCATE(YG(0:MGL))
+# if defined (MULTIPROCESSOR)
+    IF(PAR)THEN
+      SENDER = MSRID -1
+      CALL MPI_BCAST(XG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
+      CALL MPI_BCAST(YG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
+    END IF
+# endif
+  XG(0) = 0.0_SP
+  YG(0) = 0.0_SP
+# endif
+
 
     LONC=XC
     LATC=YC
