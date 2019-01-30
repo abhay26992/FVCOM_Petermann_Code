@@ -155,7 +155,7 @@ MODULE mod_ocean_control
 
 CONTAINS
 
-  SUBROUTINE FVCOM_initialize(casename_opt)
+  SUBROUTINE FVCOM_initialize(casename_opt,MPI_COMM_opt)
     !=======================================================================
     !                                                                      !
     !  This routine allocates and initializes FVCOM state variables    !
@@ -171,6 +171,7 @@ CONTAINS
     character(len=*),parameter::CVS_Name="$Name$" ! [sng] File name string
     character(len=*),parameter::CVS_Revision="$Revision$" ! [sng] File revision string
     character(len=*),INTENT(IN),OPTIONAL :: casename_opt
+    INTEGER, INTENT(IN),OPTIONAL  :: MPI_COMM_opt
 
 # if defined (RRKF)
     CHARACTER(LEN=120):: RRKFILES
@@ -192,7 +193,7 @@ CONTAINS
 
 #  if defined (MULTIPROCESSOR)
     ! INTIALIZE MPI CONTROL VARIABLES
-    CALL INIT_MPI_ENV(MYID,NPROCS,SERIAL,PAR,MSR,MSRID)
+    CALL INIT_MPI_ENV(MYID,NPROCS,SERIAL,PAR,MSR,MSRID,MPI_COMM_opt=MPI_COMM_opt)
     MPI_FVCOM_GROUP = MPI_COMM_WORLD ! FOR NOW MAKE THEM EQUAL
 #  endif
 

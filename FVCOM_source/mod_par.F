@@ -226,12 +226,13 @@ MODULE MOD_PAR
    CONTAINS   !!INCLUDED SUBROUTINES FOLLOW
 !===================================================================================|
 
-   SUBROUTINE INIT_MPI_ENV(MYID,NPROCS,SERIAL,PAR,MSR,MSRID) 
+   SUBROUTINE INIT_MPI_ENV(MYID,NPROCS,SERIAL,PAR,MSR,MSRID,MPI_COMM_opt) 
 !===================================================================================|
 !  INITIALIZE MPI ENVIRONMENT                                                       |
 !===================================================================================|
      INTEGER, INTENT(OUT) :: MYID,NPROCS,MSRID
      LOGICAL, INTENT(OUT) :: SERIAL,PAR,MSR
+     INTEGER, INTENT(IN),OPTIONAL  :: MPI_COMM_opt
      INTEGER IERR
      
      if(DBG_SET(dbg_sbr)) &
@@ -239,8 +240,10 @@ MODULE MOD_PAR
      
      IERR=0
      
-     CALL MPI_INIT(IERR)
-     IF(IERR/=0) WRITE(*,*) "BAD MPI_INIT"
+     IF (.NOT. PRESENT(MPI_COMM_opt)) THEN
+        CALL MPI_INIT(IERR)
+        IF(IERR/=0) WRITE(*,*) "BAD MPI_INIT"
+     END IF
      CALL MPI_COMM_RANK(MPI_COMM_WORLD,MYID,IERR)
      IF(IERR/=0) WRITE(*,*) "BAD MPI_COMM_RANK"
      CALL MPI_COMM_SIZE(MPI_COMM_WORLD,NPROCS,IERR)
