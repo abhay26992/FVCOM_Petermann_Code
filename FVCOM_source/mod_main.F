@@ -1304,6 +1304,9 @@ MODULE ALL_VARS
 # if defined (ICESHELF)
    REAL(SP), ALLOCATABLE,TARGET :: ZISF(:)          !!ICESHELF DRAFT
    REAL(SP), ALLOCATABLE,TARGET :: M_w(:)           !! MELT RATE
+#  if defined (FVCOM_API)
+   REAL(SP), ALLOCATABLE,TARGET :: Melt_Avg(:)           !! MELT RATE
+#  endif
 # endif
 
    REAL(SP), ALLOCATABLE,TARGET :: H(:)     !!BATHYMETRIC DEPTH   
@@ -1884,8 +1887,11 @@ CONTAINS
    ALLOCATE(ET(0:MT))            ;ET   = ZERO       !!SURFACE ELEVATION
    ALLOCATE(EGF(0:MT))           ;EGF  = ZERO       !!SURFACE ELEVATION
 # if defined (ICESHELF)
-  ALLOCATE(ZISF(0:MT))          ;ZISF    = ZERO       !! ICESHELF
-  ALLOCATE(M_w(0:MT))          ;M_w    = ZERO       !! ICESHELF
+  ALLOCATE(ZISF(0:MT))           ;ZISF    = ZERO     !! ICESHELF
+  ALLOCATE(M_w(0:MT))            ;M_w    = ZERO       !! ICESHELF
+# if defined (FVCOM_API)
+  ALLOCATE(Melt_Avg(0:MT))       ;Melt_Avg   = ZERO       !! ICESHELF
+# endif  
 # endif
 # if !defined (SEMI_IMPLICIT)
    ALLOCATE(ELRK(0:MT))          ;ELRK = ZERO       !!SURFACE ELEVATION
