@@ -632,7 +632,7 @@ CONTAINS
        END DO
 	   
 #  if defined (FVCOM_API)
-       Melt_Avg  = Melt_Avg/NSTEPS
+       Melt_Avg  = Melt_Avg/(IEND-ISTART+1)
 #  endif 	   
 
 	   
