@@ -36,7 +36,9 @@ MODULE mod_ocean_control
 # if defined (DATA_ASSIM)
   USE MOD_ASSIM
 # endif  
-
+# if defined (WET_DRY)		
+  USE MOD_WD
+# endif
 # if defined (LAG_PARTICLE)
   USE MOD_LAG
 # endif
@@ -510,6 +512,12 @@ CONTAINS
 ! sum this up after calling internal step
 ! divide by NSTEP after main loop
 
+# if defined (FVCOM_API)
+    Melt_Avg  =  0.0_SP
+# endif 
+
+
+
        ! SANITY CHECK                                                                                             
     ELSE IF (PRESENT(START_DATE_opt).OR.PRESENT(END_DATE_opt)) THEN
        CALL Fatal_Error("optional start and end dates must either both be present or neither")       
@@ -554,6 +562,14 @@ CONTAINS
           IntTime=IntTime + IMDTI
 
           CALL INTERNAL_STEP
+		  
+#  if defined (FVCOM_API)
+        Melt_Avg  = Melt_Avg + M_w 
+#  if defined (WET_DRY)		
+        Melt_Avg  = Melt_Avg + M_w*ISWETN
+#  endif		
+#  endif		  
+		  
 
           !==============================================================================!
           !    OUTPUT SCREEN REPORT/TIME SERIES DATA/OUTPUT FILES                        |
@@ -616,6 +632,12 @@ CONTAINS
 #       endif
 
        END DO
+	   
+#  if defined (FVCOM_API)
+       Melt_Avg  = Melt_Avg/(IEND-ISTART+1)
+#  endif 	   
+
+	   
        !////////////////////////// END MAIN LOOP //////////////////////////////////////
 
        ! ================================================================================!

@@ -110,47 +110,8 @@ CONTAINS
     VX = VX - VXMIN
     VY = VY - VYMIN
     VX(0) = 0.0_SP ; VY(0) = 0.0_SP
-# if defined (DATA_ASSIM)
-!-----------------add by Jadon Ge----------------------    
-    IF(.NOT.ALLOCATED(XG))  ALLOCATE(XG(0:MGL))
-    IF(.NOT.ALLOCATED(YG))  ALLOCATE(YG(0:MGL))
-    IF(.NOT.ALLOCATED(XCG)) ALLOCATE(XCG(0:NGL))
-    IF(.NOT.ALLOCATED(YCG)) ALLOCATE(YCG(0:NGL))
-# if defined (MULTIPROCESSOR)
-    IF(PAR)THEN
-      SENDER = MSRID -1
-      CALL MPI_BCAST(XG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(YG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(XCG,NGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(YCG,NGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-    END IF
-# endif
-    XG = XG - VXMIN
-    YG = YG - VYMIN
-    XG(0) = 0.0_SP ; YG(0) = 0.0_SP
 
-    XCG = XCG - VXMIN
-    YCG = YCG - VYMIN
-    XCG(0) = 0.0_SP ; YCG(0) = 0.0_SP
-!------------------------------------------------------
-# endif
-   
-
-# if defined (FVCOM_API)
-!------------------add by qin----------------------------
-   IF(.NOT.ALLOCATED(XG))  ALLOCATE(XG(0:MGL))
-   IF(.NOT.ALLOCATED(YG))  ALLOCATE(YG(0:MGL))
-# if defined (MULTIPROCESSOR)
-    IF(PAR)THEN
-      SENDER = MSRID -1
-      CALL MPI_BCAST(XG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(YG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-    END IF
-# endif
-   XG(0) = 0.0_SP
-   YG(0) = 0.0_SP
-# endif
-    !--------------CALCULATE GLOBAL ELEMENT CENTER GRID COORDINATES----------------!
+!--------------CALCULATE GLOBAL ELEMENT CENTER GRID COORDINATES----------------!
     CALL N2E2D(VX,XC)
     CALL N2E2D(VY,YC)
     
@@ -262,41 +223,6 @@ CONTAINS
 
     
     XC(0) = 0.0_SP ; YC(0) = 0.0_SP
-
-# if defined (DATA_ASSIM)
-!-----------------add by Jadon Ge----------------------
-# if defined (MULTIPROCESSOR)
-    IF(.NOT.ALLOCATED(XG))  ALLOCATE(XG(0:MGL))
-    IF(.NOT.ALLOCATED(YG))  ALLOCATE(YG(0:MGL))
-    IF(.NOT.ALLOCATED(XCG)) ALLOCATE(XCG(0:NGL))
-    IF(.NOT.ALLOCATED(YCG)) ALLOCATE(YCG(0:NGL))
-    IF(PAR)THEN
-      SENDER = MSRID -1
-      CALL MPI_BCAST(XG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(YG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(XCG,NGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(YCG,NGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-    END IF
-# endif
-    XG(0) = 0.0_SP ; YG(0) = 0.0_SP
-    XCG(0) = 0.0_SP ; YCG(0) = 0.0_SP
-!------------------------------------------------------
-# endif
-
-# if defined (FVCOM_API)
-!------------------add by qin----------------------------
-   IF(.NOT.ALLOCATED(XG))  ALLOCATE(XG(0:MGL))
-   IF(.NOT.ALLOCATED(YG))  ALLOCATE(YG(0:MGL))
-# if defined (MULTIPROCESSOR)
-    IF(PAR)THEN
-      SENDER = MSRID -1
-      CALL MPI_BCAST(XG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-      CALL MPI_BCAST(YG,MGL,MPI_F,SENDER,MPI_COMM_WORLD,IERR)
-    END IF
-# endif
-  XG(0) = 0.0_SP
-  YG(0) = 0.0_SP
-# endif
 
 
     LONC=XC

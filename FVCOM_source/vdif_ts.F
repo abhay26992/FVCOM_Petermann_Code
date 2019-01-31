@@ -173,7 +173,7 @@ SUBROUTINE VDIF_TS(NCON1,F)
 #    if !defined (WET_DRY)
               !         IF(D(I) > 0.0_SP) THEN
 #    else
-!              IF(ISWETN(I) == 1)THEN
+              IF(ISWETN(I) == 1)THEN
 #    endif
 
 ! Jadon: avoid overcooling or overheating in the region (depth<2m)
