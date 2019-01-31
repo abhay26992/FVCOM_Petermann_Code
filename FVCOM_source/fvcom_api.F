@@ -36,7 +36,9 @@ MODULE mod_ocean_control
 # if defined (DATA_ASSIM)
   USE MOD_ASSIM
 # endif  
-
+# if defined (WET_DRY)		
+  USE MOD_WD
+# endif
 # if defined (LAG_PARTICLE)
   USE MOD_LAG
 # endif
