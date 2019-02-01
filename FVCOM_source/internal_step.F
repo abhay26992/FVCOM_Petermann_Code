@@ -414,8 +414,14 @@ SUBROUTINE INTERNAL_STEP
          CALL N2E2D(ZISF,ZISF1)
          CALL ISF_COUPLING
 # if defined (ICEDRAFTMORPHY)
+# if defined (FISOC_DRAFT)
+# if defined  (FISOC_DDDT)
+         ZISF=ZISF-ISF_DDDT*DTI
+# endif
+# else
          ZISF=ZISF-M_W*DTI
-         CALL    ISF_JUDGE
+# endif
+         CALL   ISF_JUDGE
          D  = H + EL-ZISF
          DT = H + ET-ZISF
          DTFA = D
