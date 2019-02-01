@@ -1305,8 +1305,11 @@ MODULE ALL_VARS
    REAL(SP), ALLOCATABLE,TARGET :: ZISF(:)          !!ICESHELF DRAFT
    REAL(SP), ALLOCATABLE,TARGET :: M_w(:)           !! MELT RATE
 #  if defined (FVCOM_API)
-   REAL(SP), ALLOCATABLE,TARGET :: Melt_Avg(:)           !! MELT RATE
+   REAL(SP), ALLOCATABLE,TARGET :: Melt_Avg(:)       !! AVERAGED MELT RATE
 #  endif
+# if defined (FISCO_DDDT)
+   REAL(SP), ALLOCATABLE,TARGET :: ISF_DDDT   = ZERO    !! ICESHELF DRAFT CHANGE from FISOC
+# endif  
 # endif
 
    REAL(SP), ALLOCATABLE,TARGET :: H(:)     !!BATHYMETRIC DEPTH   
@@ -1887,10 +1890,13 @@ CONTAINS
    ALLOCATE(ET(0:MT))            ;ET   = ZERO       !!SURFACE ELEVATION
    ALLOCATE(EGF(0:MT))           ;EGF  = ZERO       !!SURFACE ELEVATION
 # if defined (ICESHELF)
-  ALLOCATE(ZISF(0:MT))           ;ZISF    = ZERO     !! ICESHELF
-  ALLOCATE(M_w(0:MT))            ;M_w    = ZERO       !! ICESHELF
+  ALLOCATE(ZISF(0:MT))           ;ZISF    = ZERO     !! ICESHELF DRAFT
+  ALLOCATE(M_w(0:MT))            ;M_w    = ZERO       !! MELT RATE
 # if defined (FVCOM_API)
-  ALLOCATE(Melt_Avg(0:MT))       ;Melt_Avg   = ZERO       !! ICESHELF
+  ALLOCATE(Melt_Avg(0:MT))       ;Melt_Avg   = ZERO    !! AVERAGED MELTRATE
+# endif 
+# if defined (FISCO_DDDT)
+  ALLOCATE(ISF_DDDT(0:MT))       ; ISF_DDDT   = ZERO    !! ICESHELF DRAFT CHANGE from FISOC
 # endif  
 # endif
 # if !defined (SEMI_IMPLICIT)
