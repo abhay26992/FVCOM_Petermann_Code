@@ -220,7 +220,7 @@ SUBROUTINE VDIF_TS(NCON1,F)
 
                  RAD(I,K)=SWRADF(I)*(RHEAT*EXP(ZDEP/ZETA1)+(1-RHEAT)*EXP(ZDEP/ZETA2))
 #    if defined (WET_DRY)
-! thinf: need removal too, qin              END IF
+              END IF
 # endif
            END DO
         END DO
