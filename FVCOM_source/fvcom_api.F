@@ -506,11 +506,8 @@ CONTAINS
        NSTEPS = CALCULATE_NUMBER_OF_TIMESTEPS(StartTime_sub,EndTime_sub)
        IEND = ISTART + NSTEPS   
 
-! THINF TODO MELT AVERAGE
-! add ifdef iceshelf
-! initialize melt rate average variable further up in this subroutine and allocate it to yero here
-! sum this up after calling internal step
-! divide by NSTEP after main loop
+       !PRINT*,"Time info ",IEND, ISTART, NSTEPS
+
 
 # if defined (FVCOM_API)
     Melt_Avg  =  0.0_SP

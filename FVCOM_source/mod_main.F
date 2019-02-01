@@ -1305,10 +1305,10 @@ MODULE ALL_VARS
    REAL(SP), ALLOCATABLE,TARGET :: ZISF(:)          !!ICESHELF DRAFT
    REAL(SP), ALLOCATABLE,TARGET :: M_w(:)           !! MELT RATE
 #  if defined (FVCOM_API)
-   REAL(SP), ALLOCATABLE,TARGET :: Melt_Avg(:)       !! AVERAGED MELT RATE
+   REAL(SP), ALLOCATABLE,TARGET :: Melt_Avg(:)      !! AVERAGED MELT RATE
 #  endif
-# if defined (FISCO_DDDT)
-   REAL(SP), ALLOCATABLE,TARGET :: ISF_DDDT   = ZERO    !! ICESHELF DRAFT CHANGE from FISOC
+# if defined (FISOC_DDDT)
+   REAL(SP), ALLOCATABLE,TARGET :: ISF_DDDT(:)      !! ICESHELF DRAFT CHANGE from FISOC
 # endif  
 # endif
 
@@ -1895,7 +1895,7 @@ CONTAINS
 # if defined (FVCOM_API)
   ALLOCATE(Melt_Avg(0:MT))       ;Melt_Avg   = ZERO    !! AVERAGED MELTRATE
 # endif 
-# if defined (FISCO_DDDT)
+# if defined (FISOC_DDDT)
   ALLOCATE(ISF_DDDT(0:MT))       ; ISF_DDDT   = ZERO    !! ICESHELF DRAFT CHANGE from FISOC
 # endif  
 # endif
