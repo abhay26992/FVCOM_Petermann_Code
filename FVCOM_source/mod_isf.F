@@ -123,10 +123,10 @@ MODULE MOD_ISF
    
   ENDIF ! coldstart
 
-  #    if defined (MULTIPROCESSOR)
+#    if defined (MULTIPROCESSOR)
        IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,ISISFC)
       IF(PAR)CALL AEXCHANGE(NC,MYID,NPROCS,ISISFN)
-  #    endif
+#    endif
 
 
    IF (DBG_SET(DBG_SBR)) WRITE(IPT,*) "END: SET_ISF_INI"
@@ -169,10 +169,10 @@ MODULE MOD_ISF
      IF( DTMP >0.0000_SP)    ISISFC(I) = 1
    END DO
 
-  #    if defined (MULTIPROCESSOR)
-       IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,ISISFC)
+#    if defined (MULTIPROCESSOR)
+      IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,ISISFC)
       IF(PAR)CALL AEXCHANGE(NC,MYID,NPROCS,ISISFN)
-  #    endif
+#    endif
  
 
    IF (DBG_SET(DBG_SBR)) WRITE(IPT,*) "END: ISF_JUDGE"
@@ -243,17 +243,17 @@ MODULE MOD_ISF
  U2(I) = U(I,1)**2+V(I,1)**2
  END DO
 
- # if defined (MULTIPROCESSOR)
+# if defined (MULTIPROCESSOR)
    IF(PAR) CALL AEXCHANGE(EC, MYID,NPROCS,U2)
- # endif 
+# endif 
 
  CALL E2N2D(U2,U2_W)
 
- # if defined (MULTIPROCESSOR)
+# if defined (MULTIPROCESSOR)
    IF(PAR) CALL AEXCHANGE(NC, MYID,NPROCS,U2_W)
    IF(PAR) CALL AEXCHANGE(NC, MYID,NPROCS,S_w,S_b)
    IF(PAR) CALL AEXCHANGE(NC, MYID,NPROCS,T_w,T_b)
- # endif
+# endif
 
 
 !diagnose Sb, Tb, nhet_isf, melt-freeze potential
