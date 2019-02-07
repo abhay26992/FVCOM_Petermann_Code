@@ -565,6 +565,8 @@ CONTAINS
 #   if defined (ICESHELF)
      D  = H + EL-ZISF
      DT = H + ET-ZISF
+     WHERE (D<=MIN_DEPTH)  D   =  MIN_DEPTH
+     WHERE (DT<=MIN_DEPTH) DT  =  MIN_DEPTH
      CALL N2E2D(H,H1)
      CALL N2E2D(EL,EL1)
      CALL N2E2D(D,D1)
@@ -1093,7 +1095,8 @@ CONTAINS
     DO I=1,MT
        DO K=1,KBM1
 # if defined (ICESHELF)
-        ZI(K)=ZZ(I,K)*D(I)+EL(I)-ABS(ZISF(I))
+        ! replace zisf with h+el-d to avoid negative water column thickness
+        ZI(K)=ZZ(I,K)*D(I)+EL(I)-(H(I)+EL(I)-D(I))
 # else
         ZI(K)=ZZ(I,K)*D(I)+EL(I)
 # endif
@@ -1138,7 +1141,7 @@ CONTAINS
        ! SET MEAN DENSITY
        DO K=1,KBM1
 # if defined (ICESHELF)
-        PRESSURE(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ABS(ZISF(:)))*0.1_SP
+        PRESSURE(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-(H(:)+EL(:)-D(:)))*0.1_SP
 # else
         PRESSURE(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:))*0.1_SP
 # endif
@@ -1165,7 +1168,7 @@ CONTAINS
       ! SET MEAN DENSITY
        DO K=1,KBM1
 # if defined (ICESHELF)
-         PRESSURE(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ABS(ZISF(:)))*0.01_SP
+         PRESSURE(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-(H(:)+EL(:)-D(:)))*0.01_SP
 # else
           PRESSURE(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:))*0.01_SP
 # endif
@@ -1231,7 +1234,7 @@ CONTAINS
        DO K=1,KBM1
           ! CALCULATE ZI relative to z=0
 # if defined (ICESHELF)
-          ZI(K)=ZZ(I,K)*D(I)+EL(I)-ZISF(I)
+          ZI(K)=ZZ(I,K)*D(I)+EL(I)-(H(I)+EL(I)-D(I))
 # else    
           ZI(K)=ZZ(I,K)*D(I)+EL(I)
 # endif
@@ -1575,6 +1578,8 @@ CONTAINS
 # if defined (ICESHELF)
    D  = H + EL-ZISF
    DT = H + ET-ZISF
+   WHERE (D<=MIN_DEPTH)  D   =  MIN_DEPTH
+   WHERE (DT<=MIN_DEPTH) DT  =  MIN_DEPTH
 # else
    D  = H + EL
    DT = H + ET
@@ -1619,6 +1624,8 @@ CONTAINS
      ZISF1(I)  = (ZISF(NV(I,1))+ZISF(NV(I,2))+ZISF(NV(I,3)))/3.0_SP
      D1(I)  = H1(I)+EL1(I)-ZISF1(I)
      DT1(I) = H1(I)+ET1(I)-ZISF1(I)
+     WHERE (D1<=MIN_DEPTH)  D1   =  MIN_DEPTH
+     WHERE (DT1<=MIN_DEPTH) DT1  =  MIN_DEPTH
 # else 
      H1(I)  = (H(NV(I,1))+H(NV(I,2))+H(NV(I,3)))/3.0_SP
      D1(I)  = H1(I)+EL1(I)

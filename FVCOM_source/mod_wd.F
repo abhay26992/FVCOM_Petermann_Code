@@ -132,6 +132,8 @@ MODULE MOD_WD
 # if defined (ICESHELF)
       D1  = H1 + EL1 -ZISF1
       D  = EL + H -ZISF
+      WHERE (D<=MIN_DEPTH)  D  =  MIN_DEPTH
+      WHERE (D1<=MIN_DEPTH) D1 =  MIN_DEPTH
 # else
      D1  = H1 + EL1
      D  = EL + H
@@ -285,11 +287,11 @@ MODULE MOD_WD
 !
    TMP = ELF
 # if defined (ICESHELF)
-   ELF = MAX(ELF,-H + MIN_DEPTH+ZISF)
+   ELF = MAX(ELF,-H + MIN_DEPTH+(H+EL-D))
    DELF = ELF - TMP
    DO I=1,M
-     IF(ELF(I)-DELF(I)+H(I)-ZISF(I)<0.0_SP) THEN
-       DELF(I)=H(I)+ELF(I)-ZISF(I)
+     IF(ELF(I)-DELF(I)+H(I)-(H(I)+EL(I)-D(I))<0.0_SP) THEN
+       DELF(I)=H(I)+ELF(I)-(H(I)+EL(I)-D(I))
      END IF
    END DO
 # else 

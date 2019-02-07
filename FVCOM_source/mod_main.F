@@ -847,11 +847,12 @@ MODULE CONTROL
 
    LOGICAL ICESHELF_MODEL
    CHARACTER(LEN=80)  ICESHELF_DRAFT_INI_FILE
-   CHARACTER(LEN=80)  ICESHELF_DRAFT_TYPE
-   CHARACTER(LEN=80)  ICESHELF_DRAFT_UPD_FILE
    REAL(SP) :: ICESHELF_DRDZ               !! an assumed constant linear dependency of densith with water depth.
    REAL(SP) :: ICESHELF_GAMAT              !! Nondimensional heat-transfer coefficient.
    REAL(SP) :: ICESHELF_DRAG_COEFFICIENT   !! Drag coefficient beneath the ice shelf draft.
+   LOGICAL   ICESHELF_DRAFT_VARYING 
+   CHARACTER(LEN=80)  ICESHELF_DRAFT_UPD_FILE
+
 
    ! FVCOM names
     REAL(SP) :: DRDZ
@@ -933,11 +934,11 @@ MODULE CONTROL
          & HIGH_LATITUDE_WAVE,            &
          & ICESHELF_MODEL,                &
          & ICESHELF_DRAFT_INI_FILE,       &
-         & ICESHELF_DRAFT_TYPE,           &
-         & ICESHELF_DRAFT_UPD_FILE,       &
          & ICESHELF_DRDZ,                 &
          & ICESHELF_GAMAT,                &
-         & ICESHELF_DRAG_COEFFICIENT
+         & ICESHELF_DRAG_COEFFICIENT,     &
+         & ICESHELF_DRAFT_VARYING,        &
+         & ICESHELF_DRAFT_UPD_FILE 
 
 
     !--Parameters in NameList NML_PROBE
@@ -1043,7 +1044,9 @@ MODULE CONTROL
    REAL(DP), PARAMETER :: ROFVROS   = 0.9775171065_DP!!RATIO OF THE DENSITY OF FRESH AND SEA WATER 1000./1023.   
    real(DP), parameter :: SLP0      = 101325.0_sp    !! mean sea surface pressure (Pa)
 
-
+# if defined (FISOC_DRAFT)
+    REAL(DP), PARAMETER ::  rHO_isf   = 0.918E3_DP     ! reference density of ice shelf
+# endif  
 !--Parameter Controlling Vertical Coordinate Distribution------------
    !----------!
    CHARACTER(LEN=80) :: STYPE
@@ -1307,8 +1310,9 @@ MODULE ALL_VARS
 #  if defined (FVCOM_API)
    REAL(SP), ALLOCATABLE,TARGET :: Melt_Avg(:)      !! AVERAGED MELT RATE
 #  endif
-# if defined (FISOC_DDDT)
-   REAL(SP), ALLOCATABLE,TARGET :: ISF_DDDT(:)      !! ICESHELF DRAFT CHANGE from FISOC
+# if defined (FISOC_DRAFT)
+   REAL(SP), ALLOCATABLE,TARGET :: ISF_DDDT(:)      !! RATE OF CHANGE OF DRAFT FROM FISOC
+   REAL(SP), ALLOCATABLE,TARGET :: ISF_DSDT(:)      !! RATE OF CHANGE OF UPPER SURFACE FROM FISOC
 # endif  
 # endif
 
@@ -1895,8 +1899,9 @@ CONTAINS
 # if defined (FVCOM_API)
   ALLOCATE(Melt_Avg(0:MT))       ;Melt_Avg   = ZERO    !! AVERAGED MELTRATE
 # endif 
-# if defined (FISOC_DDDT)
+# if defined (FISOC_DRAFT)
   ALLOCATE(ISF_DDDT(0:MT))       ; ISF_DDDT   = ZERO    !! ICESHELF DRAFT CHANGE from FISOC
+  ALLOCATE(ISF_DSDT(0:MT))       ; ISF_DSDT   = ZERO    !! ICESHELF DRAFT CHANGE from FISOC   
 # endif  
 # endif
 # if !defined (SEMI_IMPLICIT)

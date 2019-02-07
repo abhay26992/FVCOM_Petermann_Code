@@ -245,7 +245,7 @@ CONTAINS
     ! Is not the depth realtive to z=0
     DO K=1,KBM1
 # if defined (ICESHELF)
-  RZU(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ABS(ZISF(:)))*0.1_SP
+       RZU(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-(H(:)+EL(:)-D(:)))*0.1_SP
 # else
        RZU(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:))*0.1_SP
 # endif

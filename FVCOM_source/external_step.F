@@ -380,8 +380,11 @@ SUBROUTINE EXTERNAL_STEP
      
      !UPDATE DEPTH AND VERTICALLY AVERAGED VELOCITY FIELD
 # if defined (ICESHELF)
+!  SET D (D1) to MIN_DEPTH WHEN D (D1) IS SMALLER THAN MINIMUM WATER DEPTH
      D   = H + EL-ZISF                                                                                   
-     D1  = H1 + EL1-ZISF1                                                                                
+     D1  = H1 + EL1-ZISF1
+     WHERE (D<=MIN_DEPTH)  D  =  MIN_DEPTH
+     WHERE (D1<=MIN_DEPTH) D1 =  MIN_DEPTH                                                                                    
 # else
      D   = H + EL
      D1  = H1 + EL1

@@ -403,34 +403,48 @@ SUBROUTINE INTERNAL_STEP
 ! Here the iceshelf draft is updated in every internal time step, can be
 ! optimized to be updated a day or a month 
 # if defined (ICESHELF)
-     IF(ICESHELF_MODEL)  THEN
+    IF(ICESHELF_MODEL)  THEN
+    IF (ICESHELF_DRAFT_VARYING) THEN
         CALL   UPDATE_ICESHELF_DRAFT(IntTime,ZISF)
         CALL    ISF_JUDGE
-         D  = H + EL-ZISF
-         DT = H + ET-ZISF
-         DTFA =D
+        CALL    WET_JUDGE
+         D    =  H + EL-ZISF
+         DT   =  H + ET-ZISF
+         WHERE (D<=MIN_DEPTH)  D  =  MIN_DEPTH
+         WHERE (DT<=MIN_DEPTH) DT =  MIN_DEPTH
+         DTFA =  D
          CALL N2E2D(D,D1)
          CALL N2E2D(DT,DT1)
          CALL N2E2D(ZISF,ZISF1)
+    END IF
          CALL ISF_COUPLING
+    END IF
 # if defined (ICEDRAFTMORPHY)
 # if defined (FISOC_DRAFT)
-# if defined  (FISOC_DDDT)
-         ZISF=ZISF-ISF_DDDT*DTI
-# endif
+# if defined (FISOC_DDDT)
+# if defined (FISOC_DSDT)
+  !   update thick thickness with rate of change of upper and lower surface 
+  !   provided by FISOC 
+        ZISF      =  SQRT((ZISF*ZISF*DRDZ/RHO_isf-(ISF_DDDT+ISF_DSDT)*DTI)*RHO_isf/DRDZ)
 # else
-         ZISF=ZISF-M_W*DTI
+        ZISF      =  ZISF-ISF_DDDT*DTI
 # endif
+# endif 
+# else          
+         ZISF=ZISF-M_W*DTI
+# endif        !  FISOC_DRAFT
          CALL   ISF_JUDGE
-         D  = H + EL-ZISF
-         DT = H + ET-ZISF
+         CALL   WET_JUDGE
+         D   =  H + EL-ZISF
+         DT  =  H + ET-ZISF
+         WHERE (D<=MIN_DEPTH)  D  =  MIN_DEPTH
+         WHERE (DT<=MIN_DEPTH) DT =  MIN_DEPTH
          DTFA = D
          CALL N2E2D(D,D1)
          CALL N2E2D(DT,DT1)
          CALL N2E2D(ZISF,ZISF1)
-# endif
-    END IF
-# endif
+# endif         ! ICEDRAFTMORPHY
+# endif         ! ICESHELF
 
 # if defined (ICE)
 

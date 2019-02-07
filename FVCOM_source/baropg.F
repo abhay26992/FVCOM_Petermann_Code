@@ -52,9 +52,11 @@
 #  endif
 
 #  if defined (ICESHELF)                                
-   REAL (SP) :: DRIJK3(0:N,KBM1)     ! DRIJK3 is the density difference in the triangle center
-   REAL (SP) :: DRHO3,ZISFIJ         !  DRHO3 is the extra term related to ICESHELF, ZISFIJ is the ice draft along the triangle edge
-   REAL (SP) :: DRHO4,R1IJ           !  DRHO4 is the extra term related to iceshelf pressure term                                     !   R1IJ  is the top layer density at each  triangle edge
+   REAL (SP) :: DRIJK3(0:N,KBM1)               !  DRIJK3 is the density difference in the triangle center
+   REAL (SP) :: DRHO3,ZISFIJ                   !  DRHO3 is the extra term related to ICESHELF, ZISFIJ is the ice draft along the triangle edge
+   REAL (SP) :: DRHO4,R1IJ                     !  DRHO4 is the extra term related to iceshelf pressure term                                    
+                                               !   R1IJ  is the top layer density at each  triangle edge
+   REAL (SP) ::  TMPZI(0:MT), TMPZI1(0:NT)     ! TMPZI TMPZI1 are temporary iceshelf drafts on nodes and cells respectively
 #  endif
 !==============================================================================|
 
@@ -78,6 +80,8 @@
    DRIJK2     = 0.0_SP
 # if defined (ICESHELF)
    DRIJK3     = 0.0_SP
+   TMPZI      = 0.0_SP
+   TMPZI1     = 0.0_SP
 # endif
  
 
@@ -117,7 +121,10 @@
            DRIJK3(I,K)  = RHO(I,1)-RHO(I,K)
      END DO
  END DO
-
+! replace zisf with h+el-d to avoid computing pressure gradient with absolute
+! ice draft on dry nodes
+  TMPZI  = H  +  EL - D 
+  TMPZI1 = H1 + EL1 - D1
 # endif
    
    
@@ -133,7 +140,7 @@
           IJK=NBE(I,J)
           DIJ=0.5_SP*(DT(NV(I,J1))+DT(NV(I,J2)))
 #        if defined (ICESHELF)
-           ZISFIJ=0.5_SP*(ZISF(NV(I,J1))+ZISF(NV(I,J2)))
+           ZISFIJ=0.5_SP*(TMPZI(NV(I,J1))+TMPZI(NV(I,J2)))
            R1IJ  =0.5_SP*(RHO1(NV(I,J1),1)+RHO1(NV(I,J2),1))
 #         endif
 #         if defined (SPHERICAL)
@@ -146,7 +153,7 @@
 
 #  if defined (ICESHELF)
          DRHO3=(VY(NV(I,J1))-VY(NV(I,J2)))*DRIJK3(I,K)*ZISFIJ
-         DRHO4=ZISF1(I)*(VY(NV(I,J1))-VY(NV(I,J2)))*(R1IJ-(DRDZ*1e-3)*ZISFIJ)
+         DRHO4=TMPZI1(I)*(VY(NV(I,J1))-VY(NV(I,J2)))*(R1IJ-(DRDZ*1e-3)*ZISFIJ)
          DRHOX(I,K)=DRHOX(I,K)+DRHO1+DRHO2+DRHO3+DRHO4
 #   else
         DRHOX(I,K)=DRHOX(I,K)+DRHO1+DRHO2
@@ -172,7 +179,7 @@
 #         endif
 #  if defined (ICESHELF)
          DRHO3=(VX(NV(I,J2))-VX(NV(I,J1)))*DRIJK3(I,K)*ZISFIJ
-         DRHO4=ZISF1(I)*(VX(NV(I,J2))-VX(NV(I,J1)))*(R1IJ-(DRDZ*1e-3)*ZISFIJ)
+         DRHO4=TMPZI1(I)*(VX(NV(I,J2))-VX(NV(I,J1)))*(R1IJ-(DRDZ*1e-3)*ZISFIJ)
          DRHOY(I,K)=DRHOY(I,K)+DRHO1+DRHO2+DRHO3+DRHO4
 #  else 
           DRHOY(I,K)=DRHOY(I,K)+DRHO1+DRHO2

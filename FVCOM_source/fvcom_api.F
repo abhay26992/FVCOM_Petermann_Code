@@ -481,8 +481,7 @@ CONTAINS
     character(len=*),INTENT(IN),OPTIONAL :: START_DATE_opt, END_DATE_opt
     
     TYPE(TIME) :: StartTime_sub
-    TYPE(TIME) :: EndTime_sub
-    
+    TYPE(TIME) :: EndTime_sub 
     ! These optional arguments specify how long to run FVCOM for during this RUN call.
     ! The overwrite defaults obtained from the namelist file.
     IF (PRESENT(START_DATE_opt).AND.PRESENT(END_DATE_opt)) THEN 
@@ -510,11 +509,9 @@ CONTAINS
 
 
 # if defined (FVCOM_API)
-    Melt_Avg  =  0.0_SP
+   Melt_Avg  =  0.0_SP
 # endif 
-
-
-
+ 
        ! SANITY CHECK                                                                                             
     ELSE IF (PRESENT(START_DATE_opt).OR.PRESENT(END_DATE_opt)) THEN
        CALL Fatal_Error("optional start and end dates must either both be present or neither")       

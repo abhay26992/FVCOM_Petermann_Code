@@ -535,11 +535,11 @@ CONTAINS
                                             !RM -- longwave, Rosati and Miyakoda, JPO 18, p. 1607 (1988)
     ICESHELF_MODEL= .FALSE.
     ICESHELF_DRAFT_INI_FILE = trim(casename)//"_zisf_ini.nc"
-    ICESHELF_DRAFT_TYPE = "Options:"//TRIM(STTC)//","//TRIM(VRBL)
-    ICESHELF_DRAFT_UPD_FILE = trim(casename)//"_zisf_upd.nc"
     ICESHELF_DRDZ                    = 0.0
     ICESHELF_GAMAT                   = 0.0
     ICESHELF_DRAG_COEFFICIENT        = 0.0
+    ICESHELF_DRAFT_VARYING = .FALSE.
+    ICESHELF_DRAFT_UPD_FILE = trim(casename)//"_zisf_upd.nc"
     ICING_MODEL= .FALSE.
     ICING_FORCING_FILE = "DO NOT ADD UNTILL FVCOM IS RUNNING BY ITS SELF FIRST"
     ICING_FORCING_KIND ="Options:"//TRIM(CNSTNT)//","//TRIM(STTC)&
@@ -1867,7 +1867,7 @@ CONTAINS
      END IF
 
       ! CHECK ICESHELF DRAFT UPDATE FILE AND OPEN
-     IF (ICESHELF_MODEL .and. ICESHELF_DRAFT_TYPE /= STTC) THEN
+     IF (ICESHELF_MODEL .and. ICESHELF_DRAFT_VARYING) THEN
         ! TEST FILE NAME
        charnum = index (ICESHELF_DRAFT_UPD_FILE,".nc",back)
        if (charnum /= len_trim(ICESHELF_DRAFT_UPD_FILE)-2)&
