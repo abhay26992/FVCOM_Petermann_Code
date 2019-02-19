@@ -570,6 +570,7 @@ CONTAINS
      CALL N2E2D(H,H1)
      CALL N2E2D(EL,EL1)
      CALL N2E2D(D,D1)
+     CALL N2E2D(DT,DT1)
      CALL N2E2D(ZISF,ZISF1)
 #   else  
     D  = H + EL
