@@ -424,8 +424,8 @@ SUBROUTINE INTERNAL_STEP
 # if defined (FISOC_DDDT)
 # if defined (FISOC_DSDT)
   !   update thick thickness with rate of change of upper and lower surface 
-  !   provided by FISOC 
-        ZISF      =  SQRT((ZISF*ZISF*DRDZ/RHO_isf-(ISF_DDDT+ISF_DSDT)*DTI)*RHO_isf/DRDZ)
+  !   provided by FISOC, needs to be updated to a more advanced formula
+        ZISF      =  ZISF-(ISF_DDDT+ISF_DSDT)*DTI*RHO_isf/RHO_on
 # else
         ZISF      =  ZISF-ISF_DDDT*DTI
 # endif
