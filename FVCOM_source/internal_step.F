@@ -1226,8 +1226,13 @@ SUBROUTINE INTERNAL_STEP
 
 ! end if defined(GOTM)
   CASE('constant')
+#  if defined(ISOMIP)
+     KM = 0.0_SP
+     KH = 0.0_SP
+# else
      KM = UMOL
      KH = UMOL*VPRNU
+#  endif
   END SELECT
 
   
