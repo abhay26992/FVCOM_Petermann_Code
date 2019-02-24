@@ -417,7 +417,9 @@ SUBROUTINE INTERNAL_STEP
          CALL N2E2D(DT,DT1)
          CALL N2E2D(ZISF,ZISF1)
     END IF
+# if !defined (DEADICESHELF)
          CALL ISF_COUPLING
+# endif
     END IF
 # if defined (ICEDRAFTMORPHY)
 # if defined (FISOC_DRAFT)
