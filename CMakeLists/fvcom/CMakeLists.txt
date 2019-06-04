@@ -263,6 +263,7 @@ target_link_libraries(fvcom.bin
 if(ENABLE_FABM)
   target_include_directories(fvcom PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/fabm/modules)
   target_link_libraries(fvcom fabm)
+  target_include_directories(fvcom PRIVATE $<TARGET_PROPERTY:yaml,INTERFACE_INCLUDE_DIRECTORIES>)
 endif()
 
 install(TARGETS fvcom.bin fvcom
