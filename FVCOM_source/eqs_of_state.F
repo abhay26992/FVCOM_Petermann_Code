@@ -452,15 +452,13 @@ CONTAINS
     !  TCOEF  Thermal expansion coefficient in Linear Equation of State
     !  SCOEF  Saline contraction coefficient in  Linear Equation of State
     !
-# if defined (ISOMIP)
+# if !defined (DEADICESHELF)
     REAL(SP), PARAMETER ::  R0 = 1027.510_SP
     REAL(SP), PARAMETER ::  T0 = -1.00_SP
     REAL(SP), PARAMETER ::  S0 = 34.20_SP
     REAL(SP), PARAMETER ::  TCOEF = 3.7330e-05_SP
     REAL(SP), PARAMETER ::  SCOEF = 7.8430e-04_SP
-# endif
-
-# if defined (DEADICESHELF)
+# else
     REAL(SP), PARAMETER ::  R0 = 1028.00_SP
     REAL(SP), PARAMETER ::  T0 = 5.00_SP
     REAL(SP), PARAMETER ::  S0 = 35.00_SP
