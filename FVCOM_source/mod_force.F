@@ -6927,7 +6927,7 @@ CONTAINS
 !
        ! BULK AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
-       IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+       IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(HEATING_CALCULATE_FILE),&
@@ -7133,6 +7133,7 @@ CONTAINS
 !
        ! BULK AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+       IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(HEATING_CALCULATE_FILE),&
@@ -7531,6 +7532,7 @@ CONTAINS
 !
        ! AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+       IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
        IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
@@ -7666,6 +7668,7 @@ CONTAINS
 !
        ! AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+        IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(HEATING_SOLAR_FILE),&
@@ -8068,11 +8071,11 @@ CONTAINS
 
        ! Surface Air Temperature DATA
        VAR => FIND_VAR(ICE_FILE,"SAT",FOUND)
-       VAR => FIND_VAR(ICE_FILE,"T2",FOUND)
+       VAR => FIND_VAR(ICE_FILE,"air_temperature",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN ICE FORCING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(ICE_FORCING_FILE),&
-            & "COULD NOT FIND VARIABLE 'T2' of 'SAT'")
+            & "COULD NOT FIND VARIABLE 'air_temperature' of 'SAT'")
 
        ! MAKE SPACE FOR THE DATA FROM THE FILE
        ALLOCATE(STORAGE_ARR(lons,lats), stat = status)
@@ -8240,11 +8243,11 @@ CONTAINS
 
        ! Surface Air Temperature DATA
        VAR => FIND_VAR(ICE_FILE,"SAT",FOUND)
-       IF(.not. FOUND) VAR => FIND_VAR(ICE_FILE,"T2",FOUND)
+       IF(.not. FOUND) VAR => FIND_VAR(ICE_FILE,"air_temperature",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN ICE FORCING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(ICE_FORCING_FILE),&
-            & "COULD NOT FIND VARIABLE 'T2' or 'SAT'")
+            & "COULD NOT FIND VARIABLE 'air_temperature' or 'SAT'")
 
        ! MAKE SPACE FOR THE DATA FROM THE FILE
        ICE_SAT_N => reference_var(var)
