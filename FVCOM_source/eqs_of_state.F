@@ -857,7 +857,7 @@ CONTAINS
 
     DO K=1,KBM1
 # if defined (ICESHELF)
-       MYP(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ZISF(:))*0.1_SP
+       MYP(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ZISF(:))*0.01_SP
 # else
        MYP(:,K) = -GRAV_N(:)*1.025_SP*ZZ(:,K)*D(:) *0.01_SP
 # endif
