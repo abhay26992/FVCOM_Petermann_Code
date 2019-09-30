@@ -5304,6 +5304,58 @@ CONTAINS
 
     NCF  => ADD(NCF,VAR)
 
+
+ ! ISF_DDDT & ISF_DSDT
+# if defined(FISOC_DRAFT)
+    VAR  => NC_MAKE_AVAR(name='isf_dddt',&
+         & VALUES=isf_dddt, DIM1= DIM_node, DIM2= DIM_time)
+
+    ATT  => NC_MAKE_ATT(name='long_name',values='Ice draft change  rate from ISM ')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='description',values='Change rate, ocean &
+         &lose water is negative')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='units',values='m s-1')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='grid',values='fvcom_grid')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='coordinates',values=CoordVar)
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='type',values='data')
+    VAR  => ADD(VAR,ATT)
+
+    NCF  => ADD(NCF,VAR)
+
+    VAR  => NC_MAKE_AVAR(name='isf_dsdt',&
+         & VALUES=isf_dsdt, DIM1= DIM_node, DIM2= DIM_time)
+
+    ATT  => NC_MAKE_ATT(name='long_name',values='Ice draft change  rate from ISM')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='description',values='Change rate, ocean &
+         &lose water is negative')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='units',values='m s-1')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='grid',values='fvcom_grid')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='coordinates',values=CoordVar)
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='type',values='data')
+    VAR  => ADD(VAR,ATT)
+
+    NCF  => ADD(NCF,VAR)
+
+# endif
   END FUNCTION   ICESHELF_DATA_STATE_FILE_OBJECT
 # endif
 
