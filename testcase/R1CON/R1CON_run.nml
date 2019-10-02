@@ -266,7 +266,16 @@
  PROBES_ON       = F,
  PROBES_NUMBER   =           0,
  PROBES_FILE     = 'none'                                                        
-
+ /
+ &NML_BOUNDSCHK
+ BOUNDSCHK_ON    = F,
+ CHK_INTERVAL    =           10,
+ VELOC_MAG_MAX   =  10.0000000E+00,
+ ZETA_MAG_MAX    =  3.0000000E+00,
+ TEMP_MAX        =  12.0000000E+00,
+ TEMP_MIN        =  -2.5000000E+00,
+ SALT_MAX        =  36.0000000E+00,
+ SALT_MIN        =  30.0000000E+00
  /
  &NML_NCNEST
  NCNEST_ON       = F,
