@@ -28,7 +28,7 @@
 
 #-----------BEGIN MAKEFILE-------------------------------------------------
             SHELL         = /bin/sh
-            EXEC          = fvcom
+            EXEC          = fvcom_driver
 
 #--------------------------------------------------------------------------
 #  Preprocessing and Compilation Directives
@@ -41,12 +41,12 @@
 .F.o:
 	$(CPP) $(CPPARGS) $(PETSC_FC_INCLUDES) $*.F > $*.f90
 	$(FC)  -c $(FFLAGS) $(INCS) $*.f90
-	\rm $*.f90
+#	\rm $*.f90
 
 .F90.o:
 	$(CPP) $(CPPFLAGS) $(CPPDEFS) $(INCLDIR) $< > $*.f  
 	$(FC) -c $(FFLAGS) $(FIXEDFLAGS) $(INCS) $(INCLDIR) $*.f  
-	\rm $*.f90
+#	\rm $*.f90
 
 
 #--------------------------------------------------------------------------
@@ -127,10 +127,10 @@ FVCOM_OBJS = $(COBJS:.c=.o) $(SRCS:.F=.o) $(FIXED:.F90=.o)
 
 $(EXEC):	$(FVCOM_OBJS)
 		$(FC) $(FFLAGS) $(VISOPT) $(LDFLAGS) $(FVCOM_OBJS) $(LIBS) -o $(EXEC)
-		make libfvcom
+		make libfvcom_api
 
 
-libfvcom: $(FVCOM_OBJS)
+libfvcom_api: $(FVCOM_OBJS)
 	$(FC) -shared -o $@.so $(FVCOM_OBJS)
 #       PROBLEMS WITH SHARED OPTION, REQUIRES -fPIC in All sub libraries as well when building on x86_64
 #	$(RANLIB) $@.a

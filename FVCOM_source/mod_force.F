@@ -15755,6 +15755,7 @@ CONTAINS
 !==============================================================================|
 !==============================================================================|
 
+# if defined (ICESHELF)   
 SUBROUTINE UPDATE_ICESHELF_DRAFT(NOW,ZISF)
     IMPLICIT NONE
     TYPE(TIME), INTENT(IN) :: NOW
@@ -15783,6 +15784,7 @@ SUBROUTINE UPDATE_ICESHELF_DRAFT(NOW,ZISF)
        ZISF = FTM%NEXT_WGHT * VNP + FTM%PREV_WGHT * VPP
 
   END SUBROUTINE UPDATE_ICESHELF_DRAFT
+# endif
 !==============================================================================|
 !==============================================================================|
   SUBROUTINE UPDATE_ICING(NOW,SAT,WSPDX,WSPDY)
