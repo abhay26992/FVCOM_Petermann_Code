@@ -5356,8 +5356,6 @@ CONTAINS
     NCF  => ADD(NCF,VAR)
 
 # endif
-<<<<<<< HEAD
-=======
 
 # if defined(FVCOM_API)
  VAR  => NC_MAKE_AVAR(name='MELT_AVG',&
@@ -5386,7 +5384,6 @@ CONTAINS
 
 
 # endif
->>>>>>> old_b/master
   END FUNCTION   ICESHELF_DATA_STATE_FILE_OBJECT
 # endif
 
