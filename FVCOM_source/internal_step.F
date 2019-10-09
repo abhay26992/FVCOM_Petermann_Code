@@ -417,17 +417,26 @@ SUBROUTINE INTERNAL_STEP
          CALL N2E2D(DT,DT1)
          CALL N2E2D(ZISF,ZISF1)
     END IF
+<<<<<<< HEAD
 # if !defined (DEADICESHELF)
          CALL ISF_COUPLING
 # endif
+=======
+         CALL ISF_COUPLING
+>>>>>>> old_b/master
     END IF
 # if defined (ICEDRAFTMORPHY)
 # if defined (FISOC_DRAFT)
 # if defined (FISOC_DDDT)
 # if defined (FISOC_DSDT)
   !   update thick thickness with rate of change of upper and lower surface 
+<<<<<<< HEAD
   !   provided by FISOC 
         ZISF      =  SQRT((ZISF*ZISF*DRDZ/RHO_isf-(ISF_DDDT+ISF_DSDT)*DTI)*RHO_isf/DRDZ)
+=======
+  !   provided by FISOC, needs to be updated to a more advanced formula
+        ZISF      =  ZISF-(ISF_DDDT+ISF_DSDT)*DTI*RHO_isf/RHO_on
+>>>>>>> old_b/master
 # else
         ZISF      =  ZISF-ISF_DDDT*DTI
 # endif
@@ -1228,6 +1237,7 @@ SUBROUTINE INTERNAL_STEP
 
 ! end if defined(GOTM)
   CASE('constant')
+<<<<<<< HEAD
 #  if defined(ISOMIP)
      KM = 0.0_SP
      KH = 0.0_SP
@@ -1235,6 +1245,10 @@ SUBROUTINE INTERNAL_STEP
      KM = UMOL
      KH = UMOL*VPRNU
 #  endif
+=======
+     KM = UMOL
+     KH = UMOL*VPRNU
+>>>>>>> old_b/master
   END SELECT
 
   

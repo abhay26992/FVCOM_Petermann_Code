@@ -1045,7 +1045,12 @@ MODULE CONTROL
    real(DP), parameter :: SLP0      = 101325.0_sp    !! mean sea surface pressure (Pa)
 
 # if defined (FISOC_DRAFT)
+<<<<<<< HEAD
     REAL(DP), PARAMETER ::  rHO_isf   = 0.918E3_DP     ! reference density of ice shelf
+=======
+    REAL(DP), PARAMETER ::  RHO_isf   = 0.918E3_DP     ! reference density of ice shelf
+    REAL(DP), PARAMETER ::  RHO_on    = 1.025E3_DP     ! reference density of ocean
+>>>>>>> old_b/master
 # endif  
 !--Parameter Controlling Vertical Coordinate Distribution------------
    !----------!

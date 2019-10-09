@@ -6927,7 +6927,11 @@ CONTAINS
 !
        ! BULK AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+<<<<<<< HEAD
        IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
+=======
+       IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+>>>>>>> old_b/master
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(HEATING_CALCULATE_FILE),&
@@ -7133,7 +7137,10 @@ CONTAINS
 !
        ! BULK AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+<<<<<<< HEAD
        IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
+=======
+>>>>>>> old_b/master
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(HEATING_CALCULATE_FILE),&
@@ -7532,7 +7539,10 @@ CONTAINS
 !
        ! AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+<<<<<<< HEAD
        IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
+=======
+>>>>>>> old_b/master
        IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
@@ -7668,7 +7678,10 @@ CONTAINS
 !
        ! AIR TEMPERATURE DATA
        VAR => FIND_VAR(HEAT_FILE,"air_temperature",FOUND)
+<<<<<<< HEAD
         IF(.not. FOUND) VAR => FIND_VAR(HEAT_FILE,"SAT",FOUND)
+=======
+>>>>>>> old_b/master
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN SURFACE HEATING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(HEATING_SOLAR_FILE),&
@@ -8019,7 +8032,21 @@ CONTAINS
        CALL SET_FILE_INTERP_BILINEAR(ICE_FILE,ICE_INTP_N,ICE_INTP_C)
        ! SETUP THE ACTUAL VARIABLES USED TO LOAD DATA!
 
+<<<<<<< HEAD
           ! LOAD YOUR SHORT-WAVE FOR THE ICE MODEL
+=======
+       !IF(ASSOCIATED(ICE_FILE,HEAT_FILE)) THEN 
+       VAR => FIND_VAR(HEAT_FILE,"short_wave",FOUND)
+       IF( FOUND ) THEN
+          ! USE THE SAME MEMORY USED FOR OCEAN MODEL HEAT FLUX
+          
+          ICE_SWV_N => HEAT_SWV_N
+
+          ICE_SWV_P => HEAT_SWV_P
+
+       ELSE
+          ! LOAD YOUR OWN DATA FOR THE ICE MODEL
+>>>>>>> old_b/master
 
           ! SHORT WAVE RADIATION DATA
           VAR => FIND_VAR(ICE_FILE,"short_wave",FOUND)
@@ -8056,15 +8083,27 @@ CONTAINS
           CALL NC_CONNECT_PVAR(ICE_SWV_P,STORAGE_VEC)
           NULLIFY(STORAGE_VEC)
 
+<<<<<<< HEAD
+=======
+       END IF
+>>>>>>> old_b/master
 
 
        ! Surface Air Temperature DATA
        VAR => FIND_VAR(ICE_FILE,"SAT",FOUND)
+<<<<<<< HEAD
        VAR => FIND_VAR(ICE_FILE,"air_temperature",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN ICE FORCING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(ICE_FORCING_FILE),&
             & "COULD NOT FIND VARIABLE 'air_temperature' of 'SAT'")
+=======
+       VAR => FIND_VAR(ICE_FILE,"T2",FOUND)
+       IF(.not. FOUND) CALL FATAL_ERROR &
+            & ("IN ICE FORCING BOUNDARY CONDITION FILE OBJECT",&
+            & "FILE NAME: "//TRIM(ICE_FORCING_FILE),&
+            & "COULD NOT FIND VARIABLE 'T2' of 'SAT'")
+>>>>>>> old_b/master
 
        ! MAKE SPACE FOR THE DATA FROM THE FILE
        ALLOCATE(STORAGE_ARR(lons,lats), stat = status)
@@ -8192,6 +8231,19 @@ CONTAINS
        ! SETUP THE ACTUAL VARIABLES USED TO LOAD DATA!
 
        ! SHORT WAVE RADIATION DATA
+<<<<<<< HEAD
+=======
+       !IF(ASSOCIATED(ICE_FILE,HEAT_FILE)) THEN
+       VAR => FIND_VAR(HEAT_FILE,"short_wave",FOUND)
+       IF( FOUND ) THEN
+          ! USE THE SAME MEMORY USED FOR OCEAN MODEL HEAT FLUX
+          
+          ICE_SWV_N => HEAT_SWV_N
+
+          ICE_SWV_P => HEAT_SWV_P
+
+       ELSE
+>>>>>>> old_b/master
           ! LOAD YOUR OWN DATA FOR THE ICE MODEL
 
           ! SHORT WAVE RADIATION DATA
@@ -8217,15 +8269,27 @@ CONTAINS
           CALL NC_CONNECT_PVAR(ICE_SWV_P,STORAGE_VEC)
           NULLIFY(STORAGE_VEC)
 
+<<<<<<< HEAD
+=======
+       END IF
+>>>>>>> old_b/master
 
 
        ! Surface Air Temperature DATA
        VAR => FIND_VAR(ICE_FILE,"SAT",FOUND)
+<<<<<<< HEAD
        IF(.not. FOUND) VAR => FIND_VAR(ICE_FILE,"air_temperature",FOUND)
        IF(.not. FOUND) CALL FATAL_ERROR &
             & ("IN ICE FORCING BOUNDARY CONDITION FILE OBJECT",&
             & "FILE NAME: "//TRIM(ICE_FORCING_FILE),&
             & "COULD NOT FIND VARIABLE 'air_temperature' or 'SAT'")
+=======
+       IF(.not. FOUND) VAR => FIND_VAR(ICE_FILE,"T2",FOUND)
+       IF(.not. FOUND) CALL FATAL_ERROR &
+            & ("IN ICE FORCING BOUNDARY CONDITION FILE OBJECT",&
+            & "FILE NAME: "//TRIM(ICE_FORCING_FILE),&
+            & "COULD NOT FIND VARIABLE 'T2' or 'SAT'")
+>>>>>>> old_b/master
 
        ! MAKE SPACE FOR THE DATA FROM THE FILE
        ICE_SAT_N => reference_var(var)
@@ -15694,7 +15758,12 @@ CONTAINS
        SAT = FTM%NEXT_WGHT * VNP + FTM%PREV_WGHT * VPP
 
        ! SHORT WAVE
+<<<<<<< HEAD
        CALL UPDATE_VAR_BRACKET(ICE_FILE,ICE_SWV_P,ICE_SWV_N,WTIME,STATUS)
+=======
+!       CALL UPDATE_VAR_BRACKET(ICE_FILE,ICE_SWV_P,ICE_SWV_N,WTIME,STATUS)
+       CALL UPDATE_VAR_BRACKET(HEAT_FILE,ICE_SWV_P,ICE_SWV_N,WTIME,STATUS)
+>>>>>>> old_b/master
        IF (STATUS /= 0) THEN
           CALL FATAL_ERROR("COULD NOT UPDATE ICE SHORTWAVE BRACKET: BOUNDS EXCEEDED?")
        end if
@@ -15735,6 +15804,10 @@ CONTAINS
 !==============================================================================|
 !==============================================================================|
 
+<<<<<<< HEAD
+=======
+# if defined (ICESHELF)   
+>>>>>>> old_b/master
 SUBROUTINE UPDATE_ICESHELF_DRAFT(NOW,ZISF)
     IMPLICIT NONE
     TYPE(TIME), INTENT(IN) :: NOW
@@ -15763,6 +15836,10 @@ SUBROUTINE UPDATE_ICESHELF_DRAFT(NOW,ZISF)
        ZISF = FTM%NEXT_WGHT * VNP + FTM%PREV_WGHT * VPP
 
   END SUBROUTINE UPDATE_ICESHELF_DRAFT
+<<<<<<< HEAD
+=======
+# endif
+>>>>>>> old_b/master
 !==============================================================================|
 !==============================================================================|
   SUBROUTINE UPDATE_ICING(NOW,SAT,WSPDX,WSPDY)

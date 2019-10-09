@@ -582,7 +582,11 @@ CONTAINS
     write(UNIT=IPT,NML=NML_LAG)
     write(UNIT=IPT,NML=NML_ADDITIONAL_MODELS)
     write(UNIT=IPT,NML=NML_PROBES)
+<<<<<<< HEAD
     write(UNIT=IPT,NML=NML_BOUNDSCHK)  !bounds checking
+=======
+    ! write(UNIT=IPT,NML=NML_BOUNDSCHK)  !bounds checking
+>>>>>>> old_b/master
 
   RETURN
   END SUBROUTINE NAME_LIST_PRINT
@@ -904,11 +908,19 @@ CONTAINS
 
     ! Read BOUNDS CHECK (THRESHOLD SHUTDOWN)  Settings
     !=> bounds checking
+<<<<<<< HEAD
     READ(UNIT=NMLUNIT, NML=NML_BOUNDSCHK,IOSTAT=ios)
     if(ios .NE. 0 ) then
        if(DBG_SET(dbg_log)) write(UNIT=IPT,NML=NML_BOUNDSCHK)
        Call Fatal_Error("Can Not Read NameList NML_BOUNDSCHK from file: "//trim(FNAME))
     end if
+=======
+    !READ(UNIT=NMLUNIT, NML=NML_BOUNDSCHK,IOSTAT=ios)
+    !if(ios .NE. 0 ) then
+    !   if(DBG_SET(dbg_log)) write(UNIT=IPT,NML=NML_BOUNDSCHK)
+    !   Call Fatal_Error("Can Not Read NameList NML_BOUNDSCHK from file: "//trim(FNAME))
+    !end if
+>>>>>>> old_b/master
     !<= bounds checking
 
     REWIND(NMLUNIT)

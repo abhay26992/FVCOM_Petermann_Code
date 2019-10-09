@@ -446,7 +446,11 @@ CONTAINS
 # endif
 
     ! Setup Bounds checking (shutdown if variables exceed threshold)
+<<<<<<< HEAD
       CALL SETUP_BOUNDSCHK !bounds checking
+=======
+    ! CALL SETUP_BOUNDSCHK !bounds checking
+>>>>>>> old_b/master
 
 # if defined (LAG_PARTICLE)
     CALL SET_LAG
@@ -608,7 +612,11 @@ CONTAINS
           !==============================================================================!
           !  CALL BOUNDS CHECK TO SEE IF VARIABLES EXCEED USER-DEFINED THRESHOLDS 
           !==============================================================================!
+<<<<<<< HEAD
            CALL BOUNDSCHK  !bounds checking
+=======
+          ! CALL BOUNDSCHK  !bounds checking
+>>>>>>> old_b/master
 
           !==============================================================================!
           !    LAGRANGIAN PARTICLE TRACKING                                              |
@@ -1673,7 +1681,11 @@ CONTAINS
                 !==============================================================================!
                 !  CALL BOUNDS CHECK TO SEE IF VARIABLES EXCEED USER-DEFINED THRESHOLDS 
                 !==============================================================================!
+<<<<<<< HEAD
                  CALL BOUNDSCHK  !bounds checking
+=======
+                !CALL BOUNDSCHK  !bounds checking
+>>>>>>> old_b/master
 
                 !==============================================================================!
                 !    LAGRANGIAN PARTICLE TRACKING                                              |

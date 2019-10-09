@@ -245,7 +245,11 @@ CONTAINS
     ! Is not the depth realtive to z=0
     DO K=1,KBM1
 # if defined (ICESHELF)
+<<<<<<< HEAD
        RZU(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ZISF(:))*0.1_SP
+=======
+       RZU(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-(H(:)+EL(:)-D(:)))*0.1_SP
+>>>>>>> old_b/master
 # else
        RZU(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:))*0.1_SP
 # endif
@@ -452,12 +456,17 @@ CONTAINS
     !  TCOEF  Thermal expansion coefficient in Linear Equation of State
     !  SCOEF  Saline contraction coefficient in  Linear Equation of State
     !
+<<<<<<< HEAD
 # if !defined (DEADICESHELF)
+=======
+
+>>>>>>> old_b/master
     REAL(SP), PARAMETER ::  R0 = 1027.510_SP
     REAL(SP), PARAMETER ::  T0 = -1.00_SP
     REAL(SP), PARAMETER ::  S0 = 34.20_SP
     REAL(SP), PARAMETER ::  TCOEF = 3.7330e-05_SP
     REAL(SP), PARAMETER ::  SCOEF = 7.8430e-04_SP
+<<<<<<< HEAD
 # else
     REAL(SP), PARAMETER ::  R0 = 1028.00_SP
     REAL(SP), PARAMETER ::  T0 = 5.00_SP
@@ -467,6 +476,8 @@ CONTAINS
 # endif
 
 
+=======
+>>>>>>> old_b/master
 
     ! SET DIMS USING MY S
     lb1 = lbound(MYS,1)
@@ -512,12 +523,17 @@ CONTAINS
 
     INTEGER :: I,K,ub1,lb1,ub2,lb2
     !==============================================================================|
+<<<<<<< HEAD
 # if !defined(DEADICESHELF)
+=======
+
+>>>>>>> old_b/master
     REAL(SP), PARAMETER ::  R0 = 1027.510_SP
     REAL(SP), PARAMETER ::  T0 = -1.0_SP
     REAL(SP), PARAMETER ::  S0 = 34.20_SP
     REAL(SP), PARAMETER ::  TCOEF = 3.7330e-05_SP
     REAL(SP), PARAMETER ::  SCOEF = 7.8430e-04_SP
+<<<<<<< HEAD
 #  else
     REAL(SP), PARAMETER ::  R0 = 1028.00_SP
     REAL(SP), PARAMETER ::  T0 = 5.00_SP
@@ -525,6 +541,8 @@ CONTAINS
     REAL(SP), PARAMETER ::  TCOEF = 2.1161e-04_SP
     REAL(SP), PARAMETER ::  SCOEF = 0.000_SP
 # endif
+=======
+>>>>>>> old_b/master
 
     ! SET DIMS USING MY S
     lb1 = lbound(MYS,1)
@@ -857,7 +875,11 @@ CONTAINS
 
     DO K=1,KBM1
 # if defined (ICESHELF)
+<<<<<<< HEAD
        MYP(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ZISF(:))*0.01_SP
+=======
+       MYP(:,K) = -GRAV_N*1.025_SP*(ZZ(:,K)*D(:)-ABS(ZISF(:)))*0.1_SP
+>>>>>>> old_b/master
 # else
        MYP(:,K) = -GRAV_N(:)*1.025_SP*ZZ(:,K)*D(:) *0.01_SP
 # endif
