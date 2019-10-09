@@ -1,0 +1,623 @@
+diff --git a/FVCOM_source/coords_n_const.F b/FVCOM_source/coords_n_const.F
+index b707f60..e702f10 100644
+--- a/FVCOM_source/coords_n_const.F
++++ b/FVCOM_source/coords_n_const.F
+@@ -88,7 +88,11 @@ SUBROUTINE COORDS_N_CONST
+ 
+      CALL SETUP_GRAVITY
+      
+-     CALL LOAD_RESTART_SPONGE(CC_SPONGE) ! LOAD DIRECTLY
++# if defined (SEDIMENT)
++    CALL LOAD_RESTART_SPONGE_NN(NN_SPONGE) ! LOAD DIRECTLY TO ALL_VARS:CC_SPONGE
++# endif
++     CALL LOAD_RESTART_SPONGE(CC_SPONGE) ! LOAD DIRECTLY TO ALL_VARS:CC_SPONGE
++    
+      
+      STYPE = STYPE_RESTART
+      CALL LOAD_RESTART_SIGMA(Z,Z1) ! LOAD DIRECTLY TO ALL_VARS:Z,Z1
+@@ -142,9 +146,11 @@ SUBROUTINE COORDS_N_CONST
+      CALL LOAD_RESTART_CORIOLIS(COR)
+ 
+      CALL SETUP_GRAVITY
+-     
+-     CALL LOAD_RESTART_SPONGE(CC_SPONGE) ! LOAD DIRECTLY TO ALL_VARS:CC_SPONGE
+ 
++# if defined (SEDIMENT)
++    CALL LOAD_RESTART_SPONGE_NN(NN_SPONGE) ! LOAD DIRECTLY TO ALL_VARS:NN_SPONGC_SP
++# endif 
++     CALL LOAD_RESTART_SPONGE(CC_SPONGE) ! LOAD DIRECTLY TO ALL_VARS:CC_SPONGE
+ 
+      STYPE = STYPE_RESTART
+      CALL LOAD_RESTART_SIGMA(Z,Z1) ! LOAD DIRECTLY TO ALL_VARS:Z,Z1
+diff --git a/FVCOM_source/mod_input.F b/FVCOM_source/mod_input.F
+index bc81939..7b02782 100644
+--- a/FVCOM_source/mod_input.F
++++ b/FVCOM_source/mod_input.F
+@@ -2636,6 +2636,27 @@ CONTAINS
+ 
+   END SUBROUTINE LOAD_RESTART_SPONGE
+ 
++# if defined (SEDIMENT)
++
++   SUBROUTINE LOAD_RESTART_SPONGE_NN(SPG)
++    IMPLICIT NONE
++    REAL(SP), ALLOCATABLE, TARGET:: SPG(:)
++    TYPE(NCVAR),  POINTER :: VAR
++    INTEGER STATUS
++    LOGICAL FOUND
++
++
++    VAR => FIND_VAR(NC_START,'nn_sponge',FOUND)
++    IF(.not. FOUND) CALL FATAL_ERROR("COULD NOT FIND VARIABLE 'nn_sponge'&
++         & IN THE HOTSTART FILE OBJECT")
++    CALL NC_CONNECT_AVAR(VAR, SPG)
++    CALL NC_READ_VAR(VAR)
++    CALL NC_DISCONNECT(VAR)
++
++  END SUBROUTINE LOAD_RESTART_SPONGE_NN
++
++# endif
++
+   SUBROUTINE LOAD_RESTART_SIGMA(Z,Z1)
+     USE ALL_VARS, ONLY : N2E3D
+     IMPLICIT NONE
+diff --git a/FVCOM_source/mod_main.F b/FVCOM_source/mod_main.F
+index 17fa27a..f48acf8 100644
+--- a/FVCOM_source/mod_main.F
++++ b/FVCOM_source/mod_main.F
+@@ -1232,6 +1232,9 @@ MODULE ALL_VARS
+ 
+ 
+    REAL(SP), ALLOCATABLE,TARGET :: CC_SPONGE(:)     !!SPONGE DAMPING COEFFICIENT FOR MOMENTUM
++
++
++      REAL(SP), ALLOCATABLE,TARGET :: NN_SPONGE(:)     !!SPONGE DAMPING COEFFICIENT ON NODE 
+    
+ !---------------2-d flow variable arrays at nodes----------------------------------!
+ 
+@@ -1770,6 +1773,9 @@ CONTAINS
+    ALLOCATE(ELRK1(0:NT))         ;ELRK1     = ZERO  !!SURFACE ELEVATION
+ # endif
+    ALLOCATE(CC_SPONGE(0:NT))     ;CC_SPONGE = ZERO  !!SPONGE DAMPING COEFFICIENT FOR MOMENTUM
++
++   ALLOCATE(NN_SPONGE(0:MT))     ;NN_SPONGE = ZERO  !!SPONGE DAMPING COEFFICIENT FOR MOMENTUM
++
+                  MEMCNT = NT*17*NDB + MT*NDB + MEMCNT
+ 
+ !---------------2-d flow variable arrays at nodes----------------------------------!
+diff --git a/FVCOM_source/mod_ncdio.F b/FVCOM_source/mod_ncdio.F
+index eec02b1..e67b193 100644
+--- a/FVCOM_source/mod_ncdio.F
++++ b/FVCOM_source/mod_ncdio.F
+@@ -4142,6 +4142,11 @@ CONTAINS
+        IF (STATUS /=0 ) CALL FATAL_ERROR("COULD NOT ALLOCATE MEMORY ON IO PROC FOR OUTPUT DATA:CC_SPONGE")
+        CC_SPONGE = 0.0_SP
+ 
++      allocate(NN_SPONGE(MGL),stat=status)
++       IF (STATUS /=0 ) CALL FATAL_ERROR("COULD NOT ALLOCATE MEMORY ON IO PROC FOR OUTPUT DATA:NN_SPONGE")
++       NN_SPONGE = 0.0_SP
++
++
+        allocate(ET(MGL),stat=status)
+        IF (STATUS /=0 ) CALL FATAL_ERROR("COULD NOT ALLOCATE MEMORY ON IO PROC FOR OUTPUT DATA:EL")
+        ET = 0.0_SP
+@@ -4248,6 +4253,26 @@ CONTAINS
+ 
+     NCF  => ADD(NCF,VAR)
+ 
++   ! NN_SPONGE
++
++   VAR  => NC_MAKE_AVAR(name='nn_sponge',&
++         & values=nn_sponge, DIM1= DIM_node)
++
++    ATT  => NC_MAKE_ATT(name='long_name',values='Sponge Layer Parameter on node')
++    VAR  => ADD(VAR,ATT)
++
++    ATT  => NC_MAKE_ATT(name='units',values='nd')
++    VAR  => ADD(VAR,ATT)
++
++    ATT  => NC_MAKE_ATT(name='grid',values='fvcom_grid')
++    VAR  => ADD(VAR,ATT)
++
++    ATT  => NC_MAKE_ATT(name='type',values='data')
++    VAR  => ADD(VAR,ATT)
++
++    NCF  => ADD(NCF,VAR)
++
++
+     ! et
+     VAR  => NC_MAKE_AVAR(name='et',&
+          & values=et, DIM1= DIM_node, DIM2= DIM_time)
+diff --git a/FVCOM_source/mod_sed.F b/FVCOM_source/mod_sed.F
+index a8f79ac..84443d9 100644
+--- a/FVCOM_source/mod_sed.F
++++ b/FVCOM_source/mod_sed.F
+@@ -659,6 +659,11 @@ End Subroutine Setup_Sed
+   integer linenum,i,k1,iscan
+   real(sp)           :: ftemp
+   character(len=120) :: stemp
++  real(sp),allocatable:: ncstmp(:)
++  real(sp),allocatable:: nnstmp(:)
++  real(sp),allocatable:: nsttmp(:)
++  logical, allocatable:: nswitch(:)
++  character(len=80),allocatable:: strtmp(:)
+ 
+   if(dbg_set(dbg_sbr)) write(ipt,*) "Start: Read_Sed_Params " 
+ 
+@@ -667,7 +672,12 @@ End Subroutine Setup_Sed
+ 
+   !read in number of sediment classes 
+   Call Get_Val(nsed,sedfile,'NSED',line=linenum,echo=.false.)  
++ !! allocate
+ 
++    allocate(nswitch(nsed))
++    allocate(nnstmp(nsed))
++    allocate(strtmp(nsed))
++ 
+   !read in start interval for sed model 
+   Call Get_Val(sed_start,sedfile,'SED_START',line=linenum,echo=.false.)  
+ 
+@@ -734,13 +744,16 @@ End Subroutine Setup_Sed
+     Call Get_Val(ftemp,sedfile,'INIT_BED_FRACTION',line=linenum,echo=.false.)
+     init_bed_fraction(1) = ftemp
+   else
+-    open(unit=999,file=trim(sedfile),form='formatted')
+-    iscan = scan_file(999,"INIT_BED_FRACTION",fvec = init_bed_fraction,nsze = nsed)
+-    if(iscan /= 0)then
+-      write(*,*)'problem reading INIT_BED_FRACTION from sediment param file'
+-      stop
+-    endif
+-    close(999)
++!    open(unit=999,file=trim(sedfile),form='formatted')
++!    iscan = scan_file(999,"INIT_BED_FRACTION",fvec = init_bed_fraction,nsze = nsed)
++!    if(iscan /= 0)then
++!      write(*,*)'problem reading INIT_BED_FRACTION from sediment param file'
++!      stop
++!    endif
++!    close(999)
++!  endif
++     Call Get_Val_Array(nnstmp,sedfile,'INIT_BED_FRACTION',nsed,echo=.true.)
++     init_bed_fraction(1:nsed) = nnstmp
+   endif
+   if(minval(init_bed_fraction) < 0. .or. maxval(init_bed_fraction) > 1.)then
+     write(*,*)'error in init_bed_fraction in sed param file'
+@@ -837,76 +850,84 @@ End Subroutine Setup_Sed
+ 
+ 
+   !read in sediment parameters
+-  k1 = 1
+-
+-  do i=1,nsed
++  !================array(qin,14/03/2018)==============
+ 
++  
+     !read SED_NAME and mark position
+-    Call Get_Val(stemp,sedfile,'SED_NAME',line=linenum,echo=.false.,start=k1)
+-    sed(i)%sname = stemp
+-    sed(i)%sname2 = trim(sed(i)%sname)//'_bload'
+-    k1        = linenum+1
+-
++     Call Get_Val_Array(strtmp,sedfile,'SED_NAME',nsed,echo=.true.)
++     sed(1:nsed)%sname=strtmp
++    
+     !read type
+-    Call Get_Val(stemp,sedfile,'SED_TYPE',line=linenum,echo=.false.,start=k1)
+-    sed(i)%stype = stemp
++    Call Get_Val_Array(strtmp,sedfile,'SED_TYPE',nsed,echo=.true.)
++    sed(1:nsed)%stype = strtmp
++    deallocate(strtmp)
+ 
+     !read mean diameter
+-    Call Get_Val(ftemp,sedfile,'SED_SD50',line=linenum,echo=.false.,start=k1)
+-!Jianzhong GE
+-    sed(i)%Sd50 = ftemp
+-    deposition_d50 = ftemp*0.001
++    !read in Median grain diameter (mm) for non-cohesive sediment
++      Call Get_Val_Array(nnstmp,sedfile,'SED_SD50',nsed,echo=.true.)
++      sed(1:nsed)%Sd50=nnstmp
++
++
++  !read in grain density (kg/m3) for non-cohesive sediment
++     Call Get_Val_Array(nnstmp,sedfile,'SED_SRHO',nsed,echo=.true.)
++     sed(1:nsed)%Srho=nnstmp
++
++!    deposition_d50 = ftemp*0.001
+ !------------------Jianzhong---------------
+ !    sed(i)%w0 = -4.*4.27*Vcons/(ftemp*1.0e-3)/1.22+ &
+ !                sqrt((4.*4.27/1.22*Vcons/(ftemp*1.0e-3))**2+ &
+ !                4./(3.*1.22)*1.65*9.8*(ftemp*1.0e-3)  )
+ !------------------------------------------
+     !read sediment density 
+-    Call Get_Val(ftemp,sedfile,'SED_SRHO',line=linenum,echo=.false.,start=k1)
+-    sed(i)%Srho = ftemp 
++      !read in grain density (kg/m3) for non-cohesive sediment
++     Call Get_Val_Array(nnstmp,sedfile,'SED_SRHO',nsed,echo=.true.)
++     sed(1:nsed)%Srho=nnstmp    
++
+ !Jianzhong GE
+-    sed_rhos = ftemp
++ !   sed_rhos = ftemp
++
++    !read sediment settling rate  
++    !read in Particle settling velocity (mm/s) for non-cohesive sediment
++     Call Get_Val_Array(nnstmp,sedfile,'SED_WSET',nsed,echo=.true.)
++     sed(1:nsed)%Wset =nnstmp
++     sed(1:nsed)%w0=nnstmp
+ 
+-    !read sediment settling rate 
+-    Call Get_Val(ftemp,sedfile,'SED_WSET',line=linenum,echo=.false.,start=k1)
+-    sed(i)%Wset = ftemp
+-    sed(i)%w0   = ftemp
+ !Jianzhong GE
+-    sed_wset = ftemp*0.001
++!    sed_wset = ftemp*0.001
++
++     !read in  Surface erosion rate (kg/m2/s) for non-cohesive sediment
++     Call Get_Val_Array(nnstmp,sedfile,'SED_ERAT',nsed,echo=.true.)
++     sed(1:nsed)%Erate=nnstmp
+ 
+-    !read sediment surface erosion rate 
+-    Call Get_Val(ftemp,sedfile,'SED_ERAT',line=linenum,echo=.false.,start=k1)
+-    sed(i)%erate = ftemp
++  !read in Critical shear for erosion and deposition (N/m2).
++     Call Get_Val_Array(nnstmp,sedfile,'SED_TAUE',nsed,echo=.true.)
++     sed(1:nsed)%tau_ce=nnstmp
+ 
+-    !read sediment critical erosive shear stress 
+-    Call Get_Val(ftemp,sedfile,'SED_TAUE',line=linenum,echo=.false.,start=k1)
+-    sed(i)%tau_ce = ftemp
++     Call Get_Val_Array(nnstmp,sedfile,'SED_TAUD',nsed,echo=.true.)
++     sed(1:nsed)%tau_cd=nnstmp
+ 
+-    !read sediment critical depositional shear stress 
+-    Call Get_Val(ftemp,sedfile,'SED_TAUD',line=linenum,echo=.false.,start=k1)
+-    sed(i)%tau_cd = ftemp
++  !read in Porosity (nondimensional: 0.0-1.0):  Vwater/(Vwater+Vsed).
++     Call Get_Val_Array(nnstmp,sedfile,'SED_PORS',nsed,echo=.true.)
++     sed(1:nsed)%Spor=nnstmp
+ 
+-    !read sediment porosity
+-    Call Get_Val(ftemp,sedfile,'SED_PORS',line=linenum,echo=.false.,start=k1)
+-    sed(i)%Spor = ftemp
+ 
+ !Jianzhong Ge 03/05/2013
+     if(VERT_HINDERED)then
+       !read concentration for hindered settling  
+       if(sed(i)%stype=='cohesive')then
+-        Call Get_Val(ftemp,sedfile,'SED_CHIN',line=linenum,echo=.false.,start=k1)
+-        sed(i)%Chin = ftemp
++        Call Get_Val_Array(nnstmp,sedfile,'SED_CHIN',nsed,echo=.true.)
++        sed(1:nsed)%Chin=nnstmp 
+       end if
+ 
+       !read reduction scale for settling velocity
+       if(sed(i)%stype=='cohesive')then
+-        Call Get_Val(ftemp,sedfile,'SED_WRDC',line=linenum,echo=.false.,start=k1)
+-        sed(i)%Wrdc = ftemp
++          Call Get_Val_Array(nnstmp,sedfile,'SED_WRDC',nsed,echo=.true.)
++        sed(1:nsed)%Wrdc = nnstmp
+       end if
+     end if
+ !Jianzhong Ge 03/05/2013
+ 
+-  end do
++  
+ 
+   ! read in bedload function parameters
+   Call Get_Val(Shield_Cr_MPM,sedfile,'MPM_CS',line=linenum,echo=.false.)
+@@ -927,7 +948,7 @@ End Subroutine Setup_Sed
+   Use Scalar
+   Use Control, only : ireport,iint,msr,par
+   Use Lims,    only : m,mt,nt,kbm1,numqbc,kb,nprocs,myid
+-  Use All_Vars,only : BACKWARD_ADVECTION,BACKWARD_STEP
++  Use All_Vars,only : BACKWARD_ADVECTION,BACKWARD_STEP,NN_SPONGE
+ !  Use Mod_OBCS,only : iobcn
+ # if defined (MULTIPROCESSOR)
+   Use Mod_Par
+@@ -937,7 +958,7 @@ End Subroutine Setup_Sed
+   real(sp), intent(in ) :: DTin,Tin
+   real(sp), intent(in ) :: taub_in(m)
+ 
+-  integer :: i,k,ised,l1,l2,ierr,d_cdis,d_cflx
++  integer :: i,j,k,ised,l1,l2,ierr,d_cdis,d_cflx
+   character(len=4) :: fnum
+   real(sp) :: fact,ufact,temp
+ 
+@@ -1117,6 +1138,7 @@ End Subroutine Setup_Sed
+   !------------------------------------------------------
+ # if defined (MULTIPROCESSOR)
+   if(par)then
++    call aexchange(nc,myid,nprocs,nn_sponge)
+     do i=1,nsed
+       call aexchange(nc,myid,nprocs,sed(i)%cnew)
+     end do
+@@ -1151,6 +1173,21 @@ End Subroutine Setup_Sed
+     end do
+   endif
+ 
++   !--------------------------------------------------------
++  !  Set Boundary Conditions at the Sponge Region
++  !-------------------------------------------------------
++
++      do i=1,nsed
++       do j=1,m
++          do k=1,kbm1
++            sed(i)%cnew(j,k)=sed(i)%cnew(j,k)*(1-nn_sponge(j))               
++     !      if (sed(i)%cnew(j,k)<1e-10) sed(i)%cnew(j,k)=0.0_sp
++          end do
++       end do
++      end do
++
++
++
+   !------------------------------------------------------
+   ! Update Concentration Variables to next time level
+   !------------------------------------------------------
+@@ -1163,6 +1200,7 @@ End Subroutine Setup_Sed
+   !------------------------------------------------------
+   do i=1,nsed
+     sed(i)%conc = max(sed(i)%cnew,0.0)
++ !   WHERE(sed(i)%conc<1.e-10_SP) sed(i)%conc=0.0_SP
+   end do
+   
+   !-----------------------Jianzhong----------------------  
+@@ -1990,9 +2028,16 @@ End Subroutine Setup_Sed
+ 
+       ! limit the available source above original bed thickness 
+       ! accumulated layer is positive.
+-      if(bottom(i,dthck)>0.0_sp)then
+-         eflux_avail=  bed_frac * sed(ised)%srho*(1.0-bed_por)*bottom(i,dthck)+dep
+-      endif
++    !  if(bottom(i,dthck)>0.0_sp)then
++    !     eflux_avail=  bed_frac * sed(ised)%srho*(1.0-bed_por)*bottom(i,dthck)+dep
++    !  endif
++       if(bottom(i,morph)>0.0_sp)then
++         eflux_avail=  bed_frac *sed(ised)%srho*(1.0-bed_por)*bottom(i,morph)+dep
++       else
++         eflux_avail=0.0_sp
++       endif
++
++           
+ 
+       ! take only 99% of possible material
+       sed(ised)%eflx(i) = min(sed(ised)%eflx(i) , eflux_avail)
+diff --git a/FVCOM_source/mod_sed_cstms.F b/FVCOM_source/mod_sed_cstms.F
+index 1045dd1..7cad7c7 100644
+--- a/FVCOM_source/mod_sed_cstms.F
++++ b/FVCOM_source/mod_sed_cstms.F
+@@ -81,6 +81,7 @@ Use Mod_Par
+ Use Mod_Prec 
+ Use Mod_Types
+ Use Mod_wd
++Use Mod_input
+ Use Control, only : seddis
+ Use all_vars,only : CNSTNT,UNIFORM,SEDIMENT_PARAMETER_TYPE
+ # if defined (WAVE_CURRENT_INTERACTION)
+@@ -720,6 +721,7 @@ Subroutine Read_Sed_Params
+      !read in Surface erosion rate (kg/m2/s).
+      Call Get_Val_Array(ncstmp,sedfile,'MUD_ERATE',ncs,echo=.true.)
+      sed(1:ncs)%Erate=ncstmp
++  
+ 
+      !read in Critical shear for erosion and deposition (N/m2).
+      Call Get_Val_Array(ncstmp,sedfile,'MUD_TAU_CE',ncs,echo=.true.)
+@@ -835,6 +837,7 @@ Subroutine Read_Sed_Params
+      !read in  Surface erosion rate (kg/m2/s) for non-cohesive sediment
+      Call Get_Val_Array(nnstmp,sedfile,'SAND_ERATE',nns,echo=.true.)
+      sed(ncs+1:ncs+nns)%Erate=nnstmp
++   
+ 
+      !read in Critical shear for erosion and deposition (N/m2).
+      Call Get_Val_Array(nnstmp,sedfile,'SAND_TAU_CE',nns,echo=.true.)
+@@ -1386,7 +1389,6 @@ End Subroutine Read_Sed_Params
+     allocate(sed(i)%t_cd(0:mt     ))      ; sed(i)%t_cd = 0.0_sp
+     allocate(sed(i)%t_ce(0:mt     ))      ; sed(i)%t_ce = 0.0_sp
+     allocate(sed(i)%rate(0:mt     ))      ; sed(i)%rate = 0.0_sp
+-
+ !J. Ge for tracer advection
+     allocate(sed0(i)%conc(0:mt,kb  ))     ; sed0(i)%conc = 0.0
+     allocate(sed2(i)%conc(0:mt,kb  ))     ; sed2(i)%conc = 0.0
+@@ -1438,11 +1440,11 @@ End Subroutine Read_Sed_Params
+   do i=1,m
+     sum1 = 1.0 ; sum2 = 1.0 ; sum3 = 1.0 ; sum4 = 1.0
+     do ised=1,nst
+-      if(SEDIMENT_PARAMETER_TYPE/=UNIFORM)then
+-        sum1 = sum1*(sed(ised)%t_ce(i))**sedbed%bed_frac(i,1,ised) 
+-      else
++!      if(SEDIMENT_PARAMETER_TYPE/=UNIFORM)then
++!        sum1 = sum1*(sed(ised)%t_ce(i))**sedbed%bed_frac(i,1,ised) 
++!      else
+         sum1 = sum1*(sed(ised)%tau_ce)**sedbed%bed_frac(i,1,ised) 
+-      end if  
++!      end if  
+       sum2 = sum2*(sed(ised)%Sd50   )**sedbed%bed_frac(i,1,ised) 
+       sum3 = sum3*(sed(ised)%wsed   )**sedbed%bed_frac(i,1,ised) 
+       sum4 = sum4*(sed(ised)%Srho   )**sedbed%bed_frac(i,1,ised) 
+@@ -2654,6 +2656,8 @@ End Subroutine Read_Sed_Params
+ # if defined (WET_DRY)
+        if(iswetn(i)/=1)cycle  ! no calculation when dry node
+ # endif
++ 
++
+        SED_LOOP: DO ised=1,NST
+           !
+           !  Calculate critical shear stress in Pa
+@@ -2673,7 +2677,11 @@ End Subroutine Read_Sed_Params
+           !  Compute erosion, ero_flux (kg/m2).
+           !
+           cff1=(1.0_sp-bed(i,1,iporo))*sedbed%bed_frac(i,1,ised)
++      if(SEDIMENT_PARAMETER_TYPE/=UNIFORM) then
++          cff2=DTsed*sed(ised)%rate(i)*cff1
++      else
+           cff2=DTsed*sed(ised)%Erate*cff1
++      end if
+           cff3=sed(ised)%Srho*cff1
+           cff4=sedbed%bed_mass(i,1,bnew,ised)
+           cff5=sedbed%settling_flux(i,ised) !CRS
+@@ -2694,7 +2702,7 @@ End Subroutine Read_Sed_Params
+                &             MIN(cff3*bottom(i,iactv),cff4)+              &
+                &                cff5)
+ 
+-          !
++         
+           !  Update global tracer variables (mT units) for erosive flux.
+           !
+           sed(ised)%conc(i,kbm1)=sed(ised)%conc(i,kbm1)+sedbed%ero_flux(i,ised)
+@@ -5653,7 +5661,7 @@ End Subroutine Read_Sed_Params
+   Subroutine Calc_Sed_Bcond
+     Use Scalar
+     implicit none
+-    integer :: i
++    integer :: i,j,k
+     real(sp) :: temp
+ 
+     if(dbg_set(dbg_sbr)) write(ipt,*) "Start: Calc_Sed_Bcond"
+@@ -5663,6 +5671,7 @@ End Subroutine Read_Sed_Params
+     !------------------------------------------------------
+ # if defined (MULTIPROCESSOR)
+     if(par)then
++        call aexchange(nc,myid,nprocs,nn_sponge)
+        do i=1,nst
+           call aexchange(nc,myid,nprocs,sed(i)%cnew)
+        end do
+@@ -5686,6 +5695,7 @@ End Subroutine Read_Sed_Params
+        end do
+     endif
+ 
++   
+     !------------------------------------------------------
+     ! Point Source Boundary Conditions 
+     !------------------------------------------------------
+@@ -5697,6 +5707,22 @@ End Subroutine Read_Sed_Params
+        end do
+     endif
+ 
++
++  !--------------------------------------------------------
++  !  Set Boundary Conditions at the Sponge Region
++  !-------------------------------------------------------
++
++      do i=1,nst
++       do j=1,m 
++          do k=1,kbm1
++            sed(i)%cnew(j,k)=sed(i)%cnew(j,k)*(1-nn_sponge(j)*10.0_sp)
++            if (sed(i)%cnew(j,k)<1e-10) sed(i)%cnew(j,k)=0.0_sp
++          end do 
++       end do      
++      end do
++
++
++
+     if(dbg_set(dbg_sbr)) write(ipt,*) "End: Calc_Sed_Bcond"
+ 
+     return
+@@ -5744,8 +5770,6 @@ End Subroutine Read_Sed_Params
+   End Subroutine Update_Thickness_Delta
+ 
+ 
+-
+-
+   Subroutine finalize_sed_step
+     implicit none
+     integer :: i,ised
+@@ -5771,6 +5795,8 @@ End Subroutine Read_Sed_Params
+     !------------------------------------------------------
+     do i=1,nst
+        sed(i)%conc = max(sed(i)%cnew,0.0)
++       WHERE(sed(i)%conc<1.e-10_SP) sed(i)%conc=0.0_SP
++!       WHERE(sed(i)%conc>1.0_SP)      sed(i)%conc=1.0_SP
+     end do
+ 
+     !------------------------------------------------------
+diff --git a/FVCOM_source/mod_setup.F b/FVCOM_source/mod_setup.F
+index c90e4cb..eded144 100644
+--- a/FVCOM_source/mod_setup.F
++++ b/FVCOM_source/mod_setup.F
+@@ -465,7 +465,7 @@ CONTAINS
+   SUBROUTINE SETUP_SPONGE
+     USE MOD_SPHERICAL
+     IMPLICIT NONE
+-    REAL(SP)  TEMP,DTMP,C_SPONGE
++    REAL(SP)  TEMP,DTMP,C_SPONGE, N_SPONGE
+     INTEGER :: I1, I, SENDER, IERR
+     REAL(DP) X1_DP,Y1_DP,X2_DP,Y2_DP,DTMP_DP
+ 
+@@ -492,7 +492,21 @@ CONTAINS
+           END IF
+        END DO
+     END DO
++# if defined (SEDIMENT)
++   CC_SPONGE=0.0_SP
++    DO I=1,MT
++       DO I1=1,NSPONGE
++          DTMP=(VX(I)-X_SPG(I1))**2+(VY(I)-Y_SPG(I1))**2
++          DTMP=SQRT(DTMP)/R_SPG(I1)
++
++          IF(DTMP <= 1.0_SP) THEN
++             N_SPONGE=C_SPG(I1)*(1.0_SP-DTMP)
++             NN_SPONGE(I)=MAX(N_SPONGE,NN_SPONGE(I))
++          END IF
++       END DO
++    END DO
+ 
++# endif
+ # else
+     ! SPHERICAL
+ 
+@@ -511,8 +525,26 @@ CONTAINS
+           END IF
+        END DO
+     END DO
++# if defined (SEDIMENT)
++   CC_SPONGE=0.0_SP
++   DO I=1,MT
++       DO I1=1,NSPONGE
++          X1_DP=VX(I)
++          Y1_DP=VY(I)
++          X2_DP=X_SPG(I1)
++          Y2_DP=Y_SPG(I1)
++          CALL ARC(X1_DP,Y1_DP,X2_DP,Y2_DP,DTMP_DP)
++          DTMP=DTMP_DP/R_SPG(I1)
++          IF(DTMP <= 1.0_SP) THEN
++             N_SPONGE=C_SPG(I1)*(1.0_SP-DTMP)
++             NN_SPONGE(I)=MAX(N_SPONGE,NN_SPONGE(I))
++          END IF
++       END DO
++    END DO
++# endif
++# endif   
+ 
+-# endif    
++ 
+ 
+     DEALLOCATE(N_SPG,R_SPG,C_SPG,X_SPG,Y_SPG)
+ 
+diff --git a/FVCOM_source/mod_startup.F b/FVCOM_source/mod_startup.F
+index 86fb7fc..419ba1e 100644
+--- a/FVCOM_source/mod_startup.F
++++ b/FVCOM_source/mod_startup.F
+@@ -1636,15 +1636,15 @@ CONTAINS
+    END DO
+ 
+   ! BED VARIABLES
+-   DO II = 1,N_BED_CHARS
+-     TMP2 => bed(1:m,1:nbed,ii)
+-     VAR => FIND_VAR(NC_START,TRIM(BED_SNAMES(II)),FOUND)
+-     IF(.not. FOUND) CALL FATAL_ERROR("COULD NOT FIND VARIABLE "//    &
+-        & TRIM(BED_SNAMES(II))//" IN THE HOTSTART FILE OBJECT")
+-     CALL NC_CONNECT_PVAR(VAR, TMP2)
+-     CALL NC_READ_VAR(VAR,STKCNT)
+-     NULLIFY(TMP2)
+-   END DO
++ !  DO II = 1,N_BED_CHARS
++ !    TMP2 => bed(1:m,1:nbed,ii)
++ !    VAR => FIND_VAR(NC_START,TRIM(BED_SNAMES(II)),FOUND)
++ !    IF(.not. FOUND) CALL FATAL_ERROR("COULD NOT FIND VARIABLE "//    &
++ !       & TRIM(BED_SNAMES(II))//" IN THE HOTSTART FILE OBJECT")
++ !    CALL NC_CONNECT_PVAR(VAR, TMP2)
++ !    CALL NC_READ_VAR(VAR,STKCNT)
++ !    NULLIFY(TMP2)
++ !  END DO
+ 
+   END SUBROUTINE READ_SED
+ # endif

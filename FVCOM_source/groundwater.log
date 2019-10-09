@@ -1,0 +1,201 @@
+adv_s.F:  IF(GROUNDWATER_ON .and. GROUNDWATER_SALT_ON)THEN
+adv_s.F:  ELSEIF(GROUNDWATER_ON) THEN
+adv_t.F:  IF(GROUNDWATER_ON .and. GROUNDWATER_TEMP_ON)THEN
+adv_t.F:  ELSEIF(GROUNDWATER_ON) THEN
+bcond_gcn.F:!-- Set Groundwater flux ------------------------------------------------------|
+bcond_gcn.F:      IF (GROUNDWATER_ON) THEN
+bcond_gcn.F:         CALL UPDATE_GROUNDWATER(IntTime,BFWDIS,GW_TEMP=BFWTMP,GW_SALT=BFWSLT)
+bcond_gcn.F:!-- Set Groundwater flux ------------------------------------------------------|
+bcond_gcn.F:      IF (GROUNDWATER_ON) THEN
+bcond_gcn.F:         CALL UPDATE_GROUNDWATER(ExtTime,BFWDIS2)
+bcond_gcy.F:!-- Set Groundwater flux ------------------------------------------------------|
+bcond_gcy.F:     IF (GROUNDWATER_ON) THEN
+bcond_gcy.F:        CALL UPDATE_GROUNDWATER(IntTime,BFWDIS,GW_TEMP=BFWTMP,GW_SALT=BFWSLT)
+bcond_gcy.F:!-- Set Groundwater flux ------------------------------------------------------|
+bcond_gcy.F:   IF (GROUNDWATER_ON) THEN
+bcond_gcy.F:      CALL UPDATE_GROUNDWATER(ExtTime,BFWDIS2)
+extel_edge.F:   IF(GROUNDWATER_ON) THEN
+fct_s.F:     IF(BFWDIS(I) .GT. 0.0_SP .and. GROUNDWATER_SALT_ON) CYCLE nodes
+fct_t.F:     IF(BFWDIS(I) .GT. 0.0_SP .and. GROUNDWATER_TEMP_ON) CYCLE nodes
+fvcom.F:  !  7) Groundwater input: currently diffused bottom flux only.                    !
+mod_fabm_3D.F:     IF(BFWDIS(I) .GT. 0.0_SP .and. GROUNDWATER_SALT_ON) CYCLE nodes
+mod_fabm_3D_ge_sediment.F:     IF(BFWDIS(I) .GT. 0.0_SP .and. GROUNDWATER_SALT_ON) CYCLE nodes
+mod_force.F:  PUBLIC :: UPDATE_GROUNDWATER
+mod_force.F:    IF (.NOT. GROUNDWATER_ON ) THEN
+mod_force.F:    SELECT CASE(GROUNDWATER_KIND)
+mod_force.F:       write(flowstrng,'(f8.4)') groundwater_flow
+mod_force.F:       write(tempstrng,'(f8.4)') groundwater_temp
+mod_force.F:       write(saltstrng,'(f8.4)') groundwater_salt
+mod_force.F:          WRITE(IPT,*)"! SETTING UP CONSTANT GROUNDWATER FORCING: "
+mod_force.F:       GWATER_FORCING_COMMENTS(1) = "Using constant groundwater forcing from run file:"
+mod_force.F:       IF(GROUNDWATER_TEMP_ON) THEN
+mod_force.F:       IF(GROUNDWATER_SALT_ON) THEN
+mod_force.F:       CALL FATAL_ERROR("STATIC GROUNDWATER Not Set Up Yet")
+mod_force.F:       CALL FATAL_ERROR("TIME DEPENDENT GROUNDWATER Not Set Up Yet")
+mod_force.F:       GWATER_FILE => FIND_FILE(FILEHEAD,trim(GROUNDWATER_FILE),FOUND)
+mod_force.F:            & ("COULD NOT FIND GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE))
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:          CALL FATAL_ERROR("CAN NOT RECOGNIZE GROUNDWATER FILE!",&
+mod_force.F:       GWATER_FORCING_COMMENTS(1) = "FVCOM periodic GroundWater forcing:"
+mod_force.F:       GWATER_FORCING_COMMENTS(2) = "FILE NAME:"//TRIM(GroundWater_FILE)
+mod_force.F:       IF(GROUNDWATER_TEMP_ON) THEN
+mod_force.F:       IF(GROUNDWATER_SALT_ON) THEN
+mod_force.F:            & ("IN GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:          WRITE(IPT,*) "! USING PERIODIC GroundWater FORCING:"
+mod_force.F:       GWATER_FILE => FIND_FILE(FILEHEAD,trim(GROUNDWATER_FILE),FOUND)
+mod_force.F:            & ("COULD NOT FIND GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE))
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:          CALL FATAL_ERROR("CAN NOT RECOGNIZE GROUNDWATER FILE!",&
+mod_force.F:       GWATER_FORCING_COMMENTS(1) = "FVCOM variable GroundWater forcing:"
+mod_force.F:       GWATER_FORCING_COMMENTS(2) = "FILE NAME:"//TRIM(GroundWater_FILE)
+mod_force.F:       IF(GROUNDWATER_TEMP_ON) THEN
+mod_force.F:       IF(GROUNDWATER_SALT_ON) THEN
+mod_force.F:            & ("IN GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            & ("IN THE GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            & ("IN THE GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            &("GROUNDWATER: the number of nodes in the file does not match the fvcom grid?")
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            &("GROUNDWATER: the number of elements in the file does not match the fvcom grid?")
+mod_force.F:       VAR => FIND_VAR(GWATER_FILE,"groundwater_flux",FOUND)
+mod_force.F:            & ("IN THE GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            & "COULD NOT FIND VARIABLE 'groundwater_flux'")
+mod_force.F:            & ("IN THE GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            & "COULD NOT FIND THE UNITS FOR THE VARIABLE 'groundwater_flux'")
+mod_force.F:            & ("IN THE GROUNDWATER FILE OBJECT",&
+mod_force.F:            & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:            & "UNKNOWN UNITS FOR THE VARIABLE 'groundwater_flux'")
+mod_force.F:       IF(STATUS /= 0) CALL FATAL_ERROR("ALLOCATION ERROR IN GROUNDWATER")
+mod_force.F:       IF(STATUS /= 0) CALL FATAL_ERROR("ALLOCATION ERROR IN GROUNDWATER")
+mod_force.F:       ! GROUNDWATER INFLOW TEMPERATURE
+mod_force.F:       IF(GROUNDWATER_TEMP_ON)THEN
+mod_force.F:          VAR => FIND_VAR(GWATER_FILE,"groundwater_temp",FOUND)
+mod_force.F:               & ("IN THE GROUNDWATER FILE OBJECT",&
+mod_force.F:               & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:               & "COULD NOT FIND VARIABLE 'groundwater_temp'")
+mod_force.F:          IF(STATUS /= 0) CALL FATAL_ERROR("ALLOCATION ERROR IN GROUNDWATER")
+mod_force.F:          IF(STATUS /= 0) CALL FATAL_ERROR("ALLOCATION ERROR IN GROUNDWATER")
+mod_force.F:       ! GROUNDWATER INFLOW SALINITY
+mod_force.F:       IF(GROUNDWATER_SALT_ON)THEN
+mod_force.F:          VAR => FIND_VAR(GWATER_FILE,"groundwater_salt",FOUND)
+mod_force.F:               & ("IN THE GROUNDWATER FILE OBJECT",&
+mod_force.F:               & "FILE NAME: "//TRIM(GROUNDWATER_FILE),&
+mod_force.F:               & "COULD NOT FIND VARIABLE 'groundwater_salt'")
+mod_force.F:          IF(STATUS /= 0) CALL FATAL_ERROR("ALLOCATION ERROR IN GROUNDWATER")
+mod_force.F:          IF(STATUS /= 0) CALL FATAL_ERROR("ALLOCATION ERROR IN GROUNDWATER")
+mod_force.F:    IF(GROUNDWATER_TEMP_ON)THEN
+mod_force.F:    IF(GROUNDWATER_SALT_ON)THEN
+mod_force.F:  SUBROUTINE UPDATE_GROUNDWATER(NOW,GW_FLUX,GW_TEMP,GW_SALT)
+mod_force.F:         &("THE GROUNDWATER FLUX VARIABLE PASSED TO UPDATE IS NOT ALLOCATED")
+mod_force.F:    SELECT CASE(GROUNDWATER_KIND)
+mod_force.F:       GW_FLUX(1:MT) = GROUNDWATER_FLOW*ART1(1:MT)
+mod_force.F:       IF(GROUNDWATER_TEMP_ON .and. PRESENT(GW_TEMP)) THEN
+mod_force.F:               &("THE GROUNDWATER TEMPERATURE VARIABLE PASSED TO UPDATE IS NOT ALLOCATED")
+mod_force.F:          GW_TEMP(1:MT) = groundwater_temp
+mod_force.F:       IF(GROUNDWATER_SALT_ON .and. PRESENT(GW_SALT)) THEN
+mod_force.F:               &("THE GROUNDWATER SALINITY VARIABLE PASSED TO UPDATE IS NOT ALLOCATED")
+mod_force.F:          GW_SALT(1:MT) = groundwater_salt
+mod_force.F:       CALL FATAL_ERROR("STATIC GROUNDWATER Not Set Up Yet")
+mod_force.F:       CALL FATAL_ERROR("TIME DEPENDENT GROUNDWATER Not Set Up Yet")
+mod_force.F:          CALL FATAL_ERROR("COULD NOT UPATE GROUNDWATER_FILE TIME BRACKET: BOUNDS EXCEEDED?")
+mod_force.F:       IF(GROUNDWATER_TEMP_ON .and. PRESENT(GW_TEMP)) THEN
+mod_force.F:               &("THE GROUNDWATER TEMPERATURE VARIABLE PASSED TO UPDATE IS NOT ALLOCATED")
+mod_force.F:             CALL FATAL_ERROR("COULD NOT UPATE GROUNDWATER_FILE TIME BRACKET: BOUNDS EXCEEDED?")
+mod_force.F:       IF(GROUNDWATER_SALT_ON .and. PRESENT(GW_SALT)) THEN
+mod_force.F:               &("THE GROUNDWATER SALINITY VARIABLE PASSED TO UPDATE IS NOT ALLOCATED")
+mod_force.F:             CALL FATAL_ERROR("COULD NOT UPATE GROUNDWATER_FILE TIME BRACKET: BOUNDS EXCEEDED?")
+mod_force.F:       CALL FATAL_ERROR("UNKNOWN GROUNDWATER_FORCING_TYPE IN UPDATE GROUNDWATER")
+mod_force.F:  END SUBROUTINE UPDATE_GROUNDWATER
+mod_input.F:    NC_GROUNDWATER  = .False.
+mod_input.F:    NCAV_GROUNDWATER  = .False.
+mod_input.F:    !--Parameters in NameList NML_GROUNDWATER
+mod_input.F:    GROUNDWATER_ON = .False.
+mod_input.F:    GROUNDWATER_SALT_ON = .False.
+mod_input.F:    GROUNDWATER_TEMP_ON = .False.
+mod_input.F:    GROUNDWATER_KIND ="Options:"//TRIM(CNSTNT)//","//TRIM(STTC)&
+mod_input.F:    GROUNDWATER_FILE = trim(casename)//"_grndwtr.nc"
+mod_input.F:    GROUNDWATER_FLOW = 0.0
+mod_input.F:    GROUNDWATER_TEMP = 0.0
+mod_input.F:    GROUNDWATER_SALT = 0.0
+mod_input.F:    write(UNIT=IPT,NML=NML_GROUNDWATER)
+mod_input.F:    ! Read Groundwater Settings
+mod_input.F:    READ(UNIT=NMLUNIT, NML=NML_GROUNDWATER,IOSTAT=ios)
+mod_input.F:       if(DBG_SET(dbg_log)) write(UNIT=IPT,NML=NML_GROUNDWATER)
+mod_input.F:       Call Fatal_Error("Can Not Read NameList NML_GROUNDWATER from file: "//trim(FNAME))
+mod_input.F:         & write(UNIT=IPT,NML=NML_GROUNDWATER)
+mod_input.F:    if (GROUNDWATER_ON .and. GROUNDWATER_KIND /= CNSTNT) then
+mod_input.F:       charnum = index (GROUNDWATER_FILE,".nc",back)
+mod_input.F:       if (charnum /= len_trim(GROUNDWATER_FILE)-2)&
+mod_input.F:            & CALL WARNING("GROUNDWATER FILE does not end in .nc", &
+mod_input.F:            & trim(GROUNDWATER_FILE))
+mod_input.F:       pathnfile= trim(INPUT_DIR)//trim(GROUNDWATER_FILE)
+mod_main.F:    LOGICAL NC_GROUNDWATER
+mod_main.F:         & NC_GROUNDWATER,   &
+mod_main.F:    LOGICAL NCAV_GROUNDWATER
+mod_main.F:         & NCAV_GROUNDWATER,    &
+mod_main.F:    !--Parameters in NameList NML_GROUNDWATER
+mod_main.F:    LOGICAL GROUNDWATER_ON
+mod_main.F:    CHARACTER(LEN=80) GROUNDWATER_KIND
+mod_main.F:    CHARACTER(LEN=80) GROUNDWATER_FILE
+mod_main.F:    REAL(SP) GROUNDWATER_FLOW
+mod_main.F:    REAL(SP) GROUNDWATER_TEMP
+mod_main.F:    LOGICAL GROUNDWATER_TEMP_ON
+mod_main.F:    REAL(SP) GROUNDWATER_SALT
+mod_main.F:    LOGICAL GROUNDWATER_SALT_ON
+mod_main.F:    NAMELIST /NML_GROUNDWATER/            &
+mod_main.F:         & GROUNDWATER_ON,                &
+mod_main.F:         & GROUNDWATER_TEMP_ON,           &
+mod_main.F:         & GROUNDWATER_SALT_ON,           &
+mod_main.F:         & GROUNDWATER_KIND,              &
+mod_main.F:         & GROUNDWATER_FILE,              &
+mod_main.F:         & GROUNDWATER_FLOW,              &
+mod_main.F:         & GROUNDWATER_TEMP,              &
+mod_main.F:         & GROUNDWATER_SALT
+mod_main.F:   REAL(SP), ALLOCATABLE,TARGET :: BFWDIS(:)        !!GROUNDWATER FLUX AT CURRENT TIME
+mod_main.F:   REAL(SP), ALLOCATABLE,TARGET :: BFWDIS2(:)       !!GROUNDWATER FLUX FOR EXT
+mod_main.F:   REAL(SP), ALLOCATABLE,TARGET :: BFWTMP(:)        !!GROUNDWATER TEMP AT CURRENT TIME
+mod_main.F:   REAL(SP), ALLOCATABLE,TARGET :: BFWSLT(:)        !!GROUNDWATER SALT AT CURRENT TIME
+mod_main.F:   ALLOCATE(BFWDIS(0:MT))        ;BFWDIS = ZERO     !!GROUNDWATER FLUX FOR INT
+mod_main.F:   ALLOCATE(BFWDIS2(0:MT))       ;BFWDIS2= ZERO     !!GROUNDWATER FLUX FOR EXT
+mod_main.F:   ALLOCATE(BFWSLT(0:MT))        ;BFWSLT = ZERO     !!GROUNDWATER SALT AT CURRENT TIME
+mod_main.F:   ALLOCATE(BFWTMP(0:MT))        ;BFWTMP = ZERO     !!GROUNDWATER TEMP AT CURRENT TIME
+mod_main.F:  INTEGER, ALLOCATABLE :: NODE_BFW(:)      !!LOCAL GROUNDWATER NODES
+mod_main.F:  REAL(SP),  ALLOCATABLE :: BFWQDIS(:,:)   !!GROUNDWATER FRESH WATER FLUX DATA
+mod_main.F:!  TYPE(BC)      :: BFW_TM                  !!TIME MAP FOR GROUNDWATER DATA
+mod_ncdio.F:       IF (GROUNDWATER_ON .and. NC_GROUNDWATER) THEN
+mod_ncdio.F:          NCF2 => GROUNDWATER_FILE_OBJECT()
+mod_ncdio.F:!!$          NCF => ADD(NCF,GROUNDWATER_FILE_OBJECT() )
+mod_ncdio.F:    IF (GROUNDWATER_ON .and. NCAV_GROUNDWATER) THEN
+mod_ncdio.F:       NCF_TMP => GROUNDWATER_FILE_OBJECT()
+mod_ncdio.F:!!$       NC_AVG_DATA => ADD(NC_AVG_DATA,GROUNDWATER_FILE_OBJECT() )
+mod_ncdio.F:       ATT=> NC_Make_Runtime_Att_CHR(name='GroundWater_Forcing',values=GWATER_FORCING_COMMENTS)
+mod_ncdio.F:  FUNCTION GROUNDWATER_FILE_OBJECT() RESULT(NCF)
+mod_ncdio.F:    IF(DBG_SET(DBG_SBR)) WRITE(IPT,*) "START: GROUNDWATER_FILE_OBJECT"
+mod_ncdio.F:       IF(GROUNDWATER_TEMP_ON) THEN
+mod_ncdio.F:       IF(GROUNDWATER_SALT_ON) THEN
+mod_ncdio.F:    ! GROUNDWATER VOLUME FLUX
+mod_ncdio.F:    VAR  => NC_MAKE_AVAR(name='groundwater_flux',&
+mod_ncdio.F:    ATT  => NC_MAKE_ATT(name='long_name',values='groundwater volume flux') 
+mod_ncdio.F:    ! GROUNDWATER INFLOW TEMPERATURE
+mod_ncdio.F:    IF(GROUNDWATER_TEMP_ON) THEN
+mod_ncdio.F:       VAR  => NC_MAKE_AVAR(name='groundwater_temp',&
+mod_ncdio.F:       ATT  => NC_MAKE_ATT(name='long_name',values='groundwater inflow temperature') 
+mod_ncdio.F:    ! GROUNDWATER INFLOW SALINITY
+mod_ncdio.F:    IF(GROUNDWATER_SALT_ON) THEN
+mod_ncdio.F:       VAR  => NC_MAKE_AVAR(name='groundwater_salt',&
+mod_ncdio.F:       ATT  => NC_MAKE_ATT(name='long_name',values='groundwater inflow salinity') 
+mod_ncdio.F:  END FUNCTION GROUNDWATER_FILE_OBJECT
+mod_non_hydro.F:  IF(GROUNDWATER_ON)THEN
+mod_scal.F:     IF(BFWDIS(I) .GT. 0.0_SP .and. GROUNDWATER_SALT_ON) CYCLE nodes
+mod_semi_implicit.F:  IF(GROUNDWATER_ON)THEN
+mod_semi_implicit.F:  IF(GROUNDWATER_ON)THEN
+vdif_ts.F:!!$ THIS IS FOR AN OLDER VERSION OF GROUNDWATER
+vdif_ts_gom.F:!!$ THIS IS FOR AN OLDER VERSION OF GROUNDWATER
