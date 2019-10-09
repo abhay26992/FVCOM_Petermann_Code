@@ -1,5 +1,5 @@
-
 cd /projappl/project_2000339/source/esmf-fvcom-fisoc/FVCOM_source
+cp makefile.api makefile
 cp make.inc.puhti make.inc
 #export FC=mpiifort
 #export CFLAGS=" -O3 -fPIC"
