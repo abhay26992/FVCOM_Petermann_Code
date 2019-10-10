@@ -15740,7 +15740,7 @@ CONTAINS
 
 !==============================================================================|
 !==============================================================================|
-# if defiend (ICESHELF)
+# if defined (ICESHELF)
 SUBROUTINE UPDATE_ICESHELF_DRAFT(NOW,ZISF)
     IMPLICIT NONE
     TYPE(TIME), INTENT(IN) :: NOW
