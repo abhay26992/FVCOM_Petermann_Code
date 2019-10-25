@@ -558,9 +558,10 @@ CONTAINS
           CALL INTERNAL_STEP
 		  
 #  if defined (FVCOM_API)
-        Melt_Avg  = Melt_Avg + M_w 
-#  if defined (WET_DRY)		
+#  if defined (WET_DRY)
         Melt_Avg  = Melt_Avg + M_w*ISWETN
+#  else 		
+        Melt_Avg  = Melt_Avg + M_w
 #  endif		
 #  endif		  
 		  
