@@ -1,14 +1,21 @@
-cd /projappl/project_2000339/source/esmf-fvcom-fisoc/FVCOM_source
-cp makefile.api makefile
-cp make.inc.puhti make.inc
+
+module purge
+
+module load intel/19.0.4 intel-mpi/18.0.5 intel-mkl/2019.0.4
+module load esmf
+module load elmer/fisoc
+module load fvcom/FX4
+module load cmake
+module load netcdf/4.7.0
+module load netcdf-fortran/4.4.4
+module list
+
+python buildFVCOM_FX4.py
+
 #export FC=mpiifort
 #export CFLAGS=" -O3 -fPIC"
 #export OPT=-O3
 #export CPP= /usr/bin/cpp
 #export COMPILER= -DMPIIFORT  
-cp /projappl/project_2000339/source/esmf-fvcom-fisoc/FVCOM_source/libfvcom_api.so /projappl/project_2000339/installs/FVCOM_FX4/
-cp /projappl/project_2000339/source/esmf-fvcom-fisoc/FVCOM_source/fvcom_driver /projappl/project_2000339/installs/FVCOM_FX4/
 
-make clean
-make
 

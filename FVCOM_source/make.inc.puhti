@@ -540,7 +540,7 @@ dashL= $(empty) -L
          FFLAGS ?= $(DEBFLGS) $(OPT) -fPIC
          MDEPFLAGS ?= --cpp --fext=f90 --file=-
          RANLIB ?= ranlib
-         AR ?= ar rc
+         AR = ar rc
 #--------------------------------------------------------------------------
 #  CAT Preprocessing Flags
 #--------------------------------------------------------------------------
