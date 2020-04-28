@@ -16,7 +16,7 @@ all:
 	cd fproj && ./configure CPPFLAGS='$(COMPILER)' CC="$(CC)" CFLAGS=-O3 CXX="$(CXX)" CXXFLAGS=-O3 FC="$(FC)" FFLAGS=-O3 --with-proj4="$(MYINSTALLDIR)" --prefix="$(MYINSTALLDIR)"
 	cd fproj && make CFLAGS=-DIFORT install
 	# Patch metis.
-	cd metis && patch -p2 < ../metis-4.0.patch
+	#cd metis && patch -p2 < ../metis-4.0.patch
 	cd metis && make install
 	cd julian && make -j 4 install
 

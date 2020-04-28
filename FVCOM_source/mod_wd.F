@@ -283,7 +283,7 @@ MODULE MOD_WD
 
 !
 !--Adjust Water Surface So It Does Not Go Below Minimum Depth------------------!
-!
+
    TMP = ELF
 # if defined (ICESHELF)
    TMP_WCT = H-ZISF
@@ -304,7 +304,7 @@ MODULE MOD_WD
      END IF
    END DO
 # endif
-!
+
 !--Recompute Element Based Depths----------------------------------------------!
 !
    TMP1 = ELF1

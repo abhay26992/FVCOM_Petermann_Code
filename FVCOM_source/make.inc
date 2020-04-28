@@ -48,20 +48,22 @@
 #========== TOPDIR ========================================================
 # TOPDIR is the directory in which this make file and the fvcom source reside
 
-           TOPDIR        = /home/elmeruser/Source/esmf-fvcom-fisoc/FVCOM_source
-#EXAMPLE
-# TOPDIR = /home/user/cchen/FVCOM_source
-# TOPDIR must be set!
+           TOPDIR        ?= /projappl/project_2000339/source/esmf-fvcom-fisoc/FVCOM_source
+
 #========== INSTALLDIR =====================================================
 # INSTALLDIR is the directory where you wish to install external libraries
 # The default is in the $(TOPDIR)/libs/install, but you can choose...
-            INSTALLDIR    = $(TOPDIR)/libs/install
+
+           INSTALLDIR    ?= /projappl/project_2000339/installs/FVCOM_external
+
 #===========================================================================
 # PREPROCESSOR OPTIONS FOR CPP
-#            DEF_FLAGS     = -P -C -traditional 
-            DEF_FLAGS     = -P -traditional 
+
+            DEF_FLAGS     ?= -P -traditional 
+
 #===========================================================================
 #
+
 ####################### MEDM ENVIRONMENT #####################################
 # Use the environmental variables, LIBPATH and INCLUDEPATH, set by MODULE 
 # to find the packages used by this build.
@@ -69,24 +71,22 @@ colon=:
 empty=
 dashI= $(empty) -I
 dashL= $(empty) -L
-# ### UNCOMMENT HERE!
-             LIBDIR       =  -L$(subst $(colon),$(dashL),$(LIBPATH))
-             INCDIR       =  -I$(subst $(colon),$(dashI),$(INCLUDEPATH))
+
+             LIBDIR       ?=  -L$(subst $(colon),$(dashL),$(LIBPATH))
+             INCDIR       ?=  -I$(subst $(colon),$(dashI),$(INCLUDEPATH))
 
 ###########################################################################
-
 # LOCAL INSTAL
-#             LIBDIR       =  -L$(INSTALLDIR)/lib
-#             INCDIR       =  -I$(INSTALLDIR)/include
+#             LIBDIR       ?=  -L$(INSTALLDIR)/lib
+#             INCDIR       ?=  -I$(INSTALLDIR)/include
 
 
 #--------------------------------------------------------------------------
 #	STANDARD LIBRARIES FOR DATA AND TIME IN fVCOM:
-#
-	   DTLIBS      = -L/home/jzhge/libs_install/lib -ljulian
-           DTINCS      = -I/home/jzhge/libs_install/include
 
-#
+           DTLIBS      ?= -L$(INSTALLDIR)/lib -ljulian
+           DTINCS      ?= -I$(INSTALLDIR)/include
+
 #--------------------------------------------------------------------------
 #        NETCDF OUTPUT      NETCDF IS NOW REQUIRED TO COMPILE FVCOM
 #                           DUMP OUTPUT INTO NETCDF FILES (yes/no)
@@ -95,8 +95,9 @@ dashL= $(empty) -L
 #                           SET PATH TO LIBRARIES WITH IOLIBS      
 #                           SET PATH TO INCLUDE FILES (netcdf.mod) WITH IOINCS
 #--------------------------------------------------------------------------
-              IOLIBS       = -L/global/apps/netcdf/4.2.1.1/intel/13.0/lib -lnetcdff -lnetcdf
-              IOINCS       = -I/global/apps/netcdf/4.2.1.1/intel/13.0/include
+
+              IOLIBS       ?= -L/appl/spack/install-tree/intel-19.0.4/netcdf-fortran-4.4.4-nbpz5p/lib -lnetcdff -lnetcdf
+              IOINCS       ?= -I/appl/spack/install-tree/intel-19.0.4/netcdf-fortran-4.4.4-nbpz5p/include
 
 #--------------------------------------------------------------------------
 
@@ -117,10 +118,10 @@ dashL= $(empty) -L
 #                           UNCOMMENT TO SELECT DOUBLE PRECISION
 #--------------------------------------------------------------------------
 
-#            FLAG_1 =  -DDOUBLE_PRECISION 
+            FLAG_1 ?=  -DDOUBLE_PRECISION 
 
 ## SINGLE PRECISION OUTPUT FOR VISIT
-#            FLAG_1 =  -DDOUBLE_PRECISION -DSINGLE_OUTPUT
+#            FLAG_1 ?=  -DDOUBLE_PRECISION -DSINGLE_OUTPUT
 
 #--------------------------------------------------------------------------
 #        SPHERICAL          SELECT SPHERICAL COORDINATES FOR INTEGRATION
@@ -128,7 +129,7 @@ dashL= $(empty) -L
 #                           UNCOMMENT TO SELECT SPHERICAL COORDINATES
 #--------------------------------------------------------------------------
 
-#            FLAG_2 = -DSPHERICAL
+#            FLAG_2 ?= -DSPHERICAL
 
 #--------------------------------------------------------------------------
 #        FLOODYING/DRYING   INCLUDE WET/DRY TREATMENT OF DOMAIN
@@ -138,7 +139,7 @@ dashL= $(empty) -L
 #                           UNCOMMENT TO INCLUDE FLOODYING/DRYING
 #--------------------------------------------------------------------------
 
-#             FLAG_3 = -DWET_DRY
+             FLAG_3 ?= -DWET_DRY
 
 #--------------------------------------------------------------------------
 #        MULTI_PROCESSOR    INCLUDES PARALLELIZATION WITH MPI
@@ -148,8 +149,8 @@ dashL= $(empty) -L
 #                           UNCOMMENT TO INCLUDE MPI PARALLEL CAPABILITY
 #--------------------------------------------------------------------------
 
-             FLAG_4 = -DMULTIPROCESSOR
-             PARLIB = -L/home/jzhge/libs_install/lib -lmetis
+             FLAG_4 ?= -DMULTIPROCESSOR
+             PARLIB ?= -L$(INSTALLDIR)/lib -lmetis
 
 #--------------------------------------------------------------------------
 #        WATER_QUALITY      INCLUDE EPA WATER QUALITY MOD
@@ -159,7 +160,7 @@ dashL= $(empty) -L
 #                           UNCOMMENT TO INCLUDE WATER QUALITY MODEL
 #--------------------------------------------------------------------------
 
-#             FLAG_5 = -DWATER_QUALITY
+#             FLAG_5 ?= -DWATER_QUALITY
 
 #--------------------------------------------------------------------------
 #        PROJECTION         A Fortran90 wrapper for the Cartographic projection
@@ -177,10 +178,10 @@ dashL= $(empty) -L
 #
 #--------------------------------------------------------------------------
 
-#             FLAG_6 = -DPROJ
+#             FLAG_6 ?= -DPROJ
 
-#             PROJLIBS       = -lfproj4 -lproj -lm
-#             PROJINCS       =
+#             PROJLIBS       ?= -lfproj4 -lproj -lm
+#             PROJINCS       ?=
 
 #--------------------------------------------------------------------------
 #        DATA_ASSIMILATION  INCLUDE NUDGING BASED DATA ASSIMILATION FOR
@@ -191,16 +192,16 @@ dashL= $(empty) -L
 #                           UNCOMMENT TO INCLUDE DATA ASSIMILATION 
 #--------------------------------------------------------------------------
 
-#             FLAG_7 = -DDATA_ASSIM
+#             FLAG_7 ?= -DDATA_ASSIM
 #             include ${PETSC_DIR}/bmake/common/variables
-#             OILIB  = -lmkl_lapack -lmkl_em64t -lguide -lpthread
+#             OILIB  ?= -lmkl_lapack -lmkl_em64t -lguide -lpthread
 
-#             OILIB  = -L/usr/local/share/Intel-Compilers/mkl/lib/em64t -lmkl_lapack -lmkl_em64t -lguide -lpthread
+#             OILIB  ?= -L/usr/local/share/Intel-Compilers/mkl/lib/em64t -lmkl_lapack -lmkl_em64t -lguide -lpthread
 
 # For Build on em64t computer (Guppy) 
-#             LIBDIR = $(LIBDIR) -L/usr/local/lib64
+#             LIBDIR ?= $(LIBDIR) -L/usr/local/lib64
 # For Build on Cluster (Typhoeus and Hydra)
-#             LIBDIR = $(LIBDIR) -L/usr/local/lib/em64t
+#             LIBDIR ?= $(LIBDIR) -L/usr/local/lib/em64t
 # For i386 computers at SMAST (salmon and minke)
 #   NO NEED TO ADD ANYTHING LIBS ARE IN THE DEFAULT PATH
 
@@ -212,17 +213,14 @@ dashL= $(empty) -L
 #   !!!!!! ONLY ONE OF THE FLAGS BELOW CAN BE AND MUST BE CHOSEN
 #--------------------------------------------------------------------------
 
-            FLAG_8 =  -DLIMITED_NO
-#            FLAG_8 =  -DLIMITED_1
-#            FLAG_8 =  -DLIMITED_2
+            FLAG_8 ?=  -DLIMITED_NO
 
 #--------------------------------------------------------------------------
 #  Semi-Implicit time stepping method
 #--------------------------------------------------------------------------
 
-#             FLAG_9 = -DSEMI_IMPLICIT
+#             FLAG_9 ?= -DSEMI_IMPLICIT
 #             include ${PETSC_DIR}/bmake/common/variables
-
 
 #---------------------------------------------------------------------------
 #       SOLID BOUNDARY     IF GCN, NO GHOST CELL
@@ -233,9 +231,7 @@ dashL= $(empty) -L
 #   !!!!!! ONLY ONE OF THE FLAGS BELOW CAN BE AND MUST BE CHOSEN
 #---------------------------------------------------------------------------
 
-             FLAG_10  = -DGCN
-#             FLAG_10  = -DGCY1
-#             FLAG_10 = -DGCY2
+             FLAG_10  ?= -DGCN
 
 #--------------------------------------------------------------------------
 #        TURBULENCE MODEL   USE GOTM TURBULENCE MODEL INSTEAD OF THE ORIGINAL
@@ -245,21 +241,21 @@ dashL= $(empty) -L
 #              do_turbulence interface and will not work.
 #--------------------------------------------------------------------------
 
-#            FLAG_11 = -DGOTM
-#            GOTMLIB       = -L../GOTM_source -lturbulence -lutil #-lmeanflow
-#            GOTMINCS      = -I../GOTM_source  
+#            FLAG_11 ?= -DGOTM
+#            GOTMLIB       ?= -L../GOTM_source -lturbulence -lutil #-lmeanflow
+#            GOTMINCS      ?= -I../GOTM_source  
 
 #--------------------------------------------------------------------------
 #       EQUILIBRIUM TIDE
 #--------------------------------------------------------------------------
 
-#            FLAG_12 = -DEQUI_TIDE
+#            FLAG_12 ?= -DEQUI_TIDE
 
 #--------------------------------------------------------------------------
 #       ATMOSPHERIC TIDE
 #--------------------------------------------------------------------------
 
-#            FLAG_13 = -DATMO_TIDE
+#            FLAG_13 ?= -DATMO_TIDE
 
 #--------------------------------------------------------------------------
 #       RIVER DISTRIBUTION OPTION:
@@ -269,7 +265,7 @@ dashL= $(empty) -L
 #       RIVER INPUT FILES!
 #--------------------------------------------------------------------------
 
-#            FLAG_14 = -DRIVER_FLOAT
+#            FLAG_14 ?= -DRIVER_FLOAT
 
 #--------------------------------------------------------------------------
 #        Using A fully multidimensional positive definite advection
@@ -278,19 +274,19 @@ dashL= $(empty) -L
 #        Physics, 54, 325-362, 1984
 #--------------------------------------------------------------------------
 
-            FLAG_15 = -DMPDATA
+            FLAG_15 ?= -DMPDATA
 
 #--------------------------------------------------------------------------
 #         Run Two-D Barotropic Mode Only
 #--------------------------------------------------------------------------
 
-#             FLAG_16 = -DTWO_D_MODEL
+#             FLAG_16 ?= -DTWO_D_MODEL
 
 #--------------------------------------------------------------------------
 #         Output 2-D Momentum Balance Checking
 #--------------------------------------------------------------------------
 
-#            FLAG_17 = -DBALANCE_2D  
+#            FLAG_17 ?= -DBALANCE_2D  
 
 #--------------------------------------------------------------------------
 #           OPEN BOUNDARY FORCING TYPE 
@@ -299,20 +295,20 @@ dashL= $(empty) -L
 #           FORCING AND OPEN BOUNDARY VOLUME TRANSPORT FORCING 
 #---------------------------------------------------------------------------
 
-#            FLAG_18 = -DMEAN_FLOW
+#            FLAG_18 ?= -DMEAN_FLOW
 
 #--------------------------------------------------------------------------
 #           OUTPUT TIDAL INFORMATION AT NTIDENODE and NTIDECELL
 #           FOR MEANFLOW CALCULATION.
 #---------------------------------------------------------------------------
 
-#            FLAG_19 = -DTIDE_OUTPUT
+#            FLAG_19 ?= -DTIDE_OUTPUT
 
 #--------------------------------------------------------------------------
 #           dye release      
 #---------------------------------------------------------------------------
 
-#            FLAG_20 = -DDYE_RELEASE  
+#            FLAG_20 ?= -DDYE_RELEASE  
 
 #--------------------------------------------------------------------------
 #        SUSPENDED SEDIMENT MODEL:   UNCOMMENT TO INCLUDE MODEL
@@ -327,26 +323,26 @@ dashL= $(empty) -L
 #    FLUID_MUD : activate the 2-D fluid mud at bed-water interface
 #--------------------------------------------------------------------------
 
-#            FLAG_21 =  -DSEDIMENT
-#            FLAG_211 = -DORIG_SED
-#            FLAG_211 = -DCSTMS_SED
+#            FLAG_21 ?=  -DSEDIMENT
+#            FLAG_211 ?= -DORIG_SED
+#            FLAG_211 ?= -DCSTMS_SED
 #
-#            FLAG_22 =  -DOFFLINE_SEDIMENT
-#            FLAG_43 =  -DFLUID_MUD
+#            FLAG_22 ?=  -DOFFLINE_SEDIMENT
+#            FLAG_43 ?=  -DFLUID_MUD
 #
 #--------------------------------------------------------------------------
 #         KALMAN FILTERS
 #--------------------------------------------------------------------------
 
-#              FLAG_23 = -DRRKF
-#              FLAG_23 = -DENKF
+#              FLAG_23 ?= -DRRKF
+#              FLAG_23 ?= -DENKF
 #             include ${PETSC_DIR}/bmake/common/variables
-#              KFLIB  = -lmkl_lapack -lmkl_em64t -lguide -llapack -lblas 
+#              KFLIB  ?= -lmkl_lapack -lmkl_em64t -lguide -llapack -lblas 
 
 # For Build on em64t computer (Guppy) 
-#             LIBDIR = $(LIBDIR) -L/usr/local/lib64
+#             LIBDIR ?= $(LIBDIR) -L/usr/local/lib64
 # For Build on Cluster (Typhoeus and Hydra)
-#             LIBDIR = $(LIBDIR) -L/usr/local/lib/em64t
+#             LIBDIR ?= $(LIBDIR) -L/usr/local/lib/em64t
 # For i386 computers at SMAST (salmon and minke)
 #   NO NEED TO ADD ANYTHING LIBS ARE IN THE DEFAULT PATH
 
@@ -354,25 +350,24 @@ dashL= $(empty) -L
 #         Run One-D Mode with Biological Model
 #--------------------------------------------------------------------------
 
-#             FLAG_24 = -DONE_D_MODEL
+#             FLAG_24 ?= -DONE_D_MODEL
 
 #--------------------------------------------------------------------------
 #       GENERAL BIOLOGICAL MODEL:    UNCOMMENT TO INCLUDE MODEL
 #-------------------------------------------------------------------------- 
-#            FLAG_25  = -DBioGen
-#            FLAG_251 = -DOFFLINE_BIOLOGY
-#            BIOLIB   = -L$(TOPDIR)/BIO_source -lbiomodule
-#            BIOINCS  = -I$(TOPDIR)/BIO_source
+#            FLAG_25  ?= -DBioGen
+#            FLAG_251 ?= -DOFFLINE_BIOLOGY
+#            BIOLIB   ?= -L$(TOPDIR)/BIO_source -lbiomodule
+#            BIOINCS  ?= -I$(TOPDIR)/BIO_source
 
 
 #--------------------------------------------------------------------------
-#         Dynamic/Thermodynamic Ice                     
+#         Dynamic/Thermodynamic seaice                     
 #--------------------------------------------------------------------------
-
 # NOTE: Must use -DSPHERICAL  and -DHEAT_FLUX ----- this note only for old version v2.7
 #       ICE_EMBEDDING must with SEMI_IMPLICIT
-#            FLAG_26 = -DICE  
-#            FLAG_261 = -DICE_EMBEDDING  
+#            FLAG_26 ?= -DICE  
+#            FLAG_261 ?= -DICE_EMBEDDING  
 
 #--------------------------------------------------------------------------
 #         CALCULATE THE NET HEAT FLUX IN MODEL (THREE CHOICES):
@@ -381,123 +376,113 @@ dashL= $(empty) -L
 #         3. CALCULATE THE NET HEAT FLUX USING SOLAR HEATING MODULE                          
 #--------------------------------------------------------------------------
 
-#            FLAG_27 = -DHEATING_CALCULATED  
-#            FLAG_27 = -DHEATING_CALCULATED_GL  
-#            FLAG_27 = -DHEATING_SOLAR  
+#            FLAG_27 ?= -DHEATING_CALCULATED  
+#            FLAG_27 ?= -DHEATING_CALCULATED_GL  
+#            FLAG_27 ?= -DHEATING_SOLAR  
 
 #--------------------------------------------------------------------------
 #         AIR_PRESSURE FROM SURFACE FORCING                           
 #--------------------------------------------------------------------------
 
-#            FLAG_28 = -DAIR_PRESSURE  
+#            FLAG_28 ?= -DAIR_PRESSURE  
 
 #--------------------------------------------------------------------------
 # Visit online simulation mode
 #--------------------------------------------------------------------------  
 
-#            FLAG_29 = -DVISIT
+#            FLAG_29 ?= -DVISIT
 
-#      VISITLIB     = -lm -ldl -lsimf -lsim -lpthread
-#      VISITLIBPATH = $(LIBDIR)
-#      VISITINCPATH = $(INCDIR)
+#      VISITLIB     ?= -lm -ldl -lsimf -lsim -lpthread
+#      VISITLIBPATH ?= $(LIBDIR)
+#      VISITINCPATH ?= $(INCDIR)
 
 
 # USE DEVELOPER INSTALL VISIT
-#      VISITLIBPATH = 
-#      VISITLIB     =  -lm -ldl -lsimf -lsim -lpthread
-#      VISITINC     = 
+#      VISITLIBPATH ?= 
+#      VISITLIB     ?=  -lm -ldl -lsimf -lsim -lpthread
+#      VISITINC     ?= 
 
 #--------------------------------------------------------------------------
 #        NON-HYDROSTATIC MODEL:
 #--------------------------------------------------------------------------
 
-#             FLAG_30 =  -DNH
+#             FLAG_30 ?=  -DNH
 #             include ${PETSC_DIR}/bmake/common/variables
 
 #--------------------------------------------------------------------------
 #        PARTICLE TRACKING
 #--------------------------------------------------------------------------
 
-#             FLAG_31 =  -DLAG_PARTICLE
+#             FLAG_31 ?=  -DLAG_PARTICLE
 
 #--------------------------------------------------------------------------
 #        WAVE-CURRENT INTERACTION
 #--------------------------------------------------------------------------
-#             FLAG_32 =  -DWAVE_CURRENT_INTERACTION
-#             FLAG_33 =  -DPLBC
+#             FLAG_32 ?=  -DWAVE_CURRENT_INTERACTION
+#             FLAG_33 ?=  -DPLBC
 #           NOTE! THis option is for wave code          
-#             FLAG_34 =  -DEXPLICIT
+#             FLAG_34 ?=  -DEXPLICIT
 #           WAVE ONLY
-#             FLAG_35 = -DWAVE_ONLY
+#             FLAG_35 ?= -DWAVE_ONLY
 # Svendsen Roller contribution
-#             FLAG_36 = -DWAVE_ROLLER
-#             FLAG_37 = -DWAVE_OFFLINE
+#             FLAG_36 ?= -DWAVE_ROLLER
+#             FLAG_37 ?= -DWAVE_OFFLINE
 #             include ${PETSC_DIR}/bmake/common/variables
 #--------------------------------------------------------------------------
 #        THIN-DAM MODEL
 #--------------------------------------------------------------------------
-#             FLAG_38 = -DTHIN_DAM
+#             FLAG_38 ?= -DTHIN_DAM
 
 #--------------------------------------------------------------------------
 #        PWP MIXED LAYER MODEL:
 #--------------------------------------------------------------------------
 
-#            FLAG_39 =  -DPWP
+#            FLAG_39 ?=  -DPWP
 
 #--------------------------------------------------------------------------
 #        VERTICAL ADVECTION LIMITER:
 #        FOR S-COORDINATES, DON'T USE THIS FLAG
 #--------------------------------------------------------------------------
 
-#           FLAG_40 =  -DLIMITER_VER_ADV
+#           FLAG_40 ?=  -DLIMITER_VER_ADV
 
 #--------------------------------------------------------------------------
 #        PETSC Version
 #        If your PETSc is 2.3.2 or older, uncomment this flag
 #--------------------------------------------------------------------------
-#             FLAG_41 = -DOLD_PETSC
+#             FLAG_41 ?= -DOLD_PETSC
 
 #--------------------------------------------------------------------------
 #        SPECIAL PARTITION
 #        This flag can make sure the identical repeat run for same amount of CPUs 
 #--------------------------------------------------------------------------
-#             FLAG_42 = -DPARTITION_SPECIAL
+#             FLAG_42 ?= -DPARTITION_SPECIAL
 
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
-#         Dynamic/Thermodynamic IceShelf                     
+#         Dynamic/Thermodynamic IceShelf and ice model coupling options
 #--------------------------------------------------------------------------
-#
-            FLAG_51   = -DICESHELF  
-#           FLAG_511  = -DICEDRAFTMORPHY 
-            FLAG_512  = -DISOMIP
-            FLAG_513  = -DDEADICESHELF
-#-------------------------------------------------------------------------
-#--------------------------------------------------------------------------
-#           FVCOM_API FOR COUPLING VIA FISOC
-#-------------------------------------------------------------------------
-            FLAG_52   = -DFVCOM_API
-            FLAG_521  = -DFISOC_DRAFT
-            FLAG 522  = -DFISOC_DDDT
-            FLAG_523  = -DFISOC_DSDT
+# -DISOMIP 
+#            CPP_MISC ?= -DICESHELF -DICEDRAFTMORPHY -DFVCOM_API -DFISOC_DDDT -DFISOC_DSDT -DFISOC_DRAFT
+            CPP_MISC ?= -DICESHELF -DICEDRAFTMORPHY -DFVCOM_API -DFISOC_DDDT  -DFISOC_DRAFT
+
 #-------------------------------------------------------------------------
 #-------------------------------------------------------------------------
 #            TVD
 #--------------------------------------------------------------------------
 #
-            FLAG_61 = -DTVD
-#-----------------------------------------
+#            FLAG_61 ?= -DTVD
 
 #-------------------------------------------------------------------------
 #        DEVELOPMENT FLAGS
 #            FOR BETA WORK ONLY 
 #--------------------------------------------------------------------------
 
-#             FLAG_101 = -DDEVELOP1
-#             FLAG_102 = -DDEVELOP2
-#             FLAG_103 = -DDEVELOP3
-#             FLAG_104 = -DDEVELOP4
-#             FLAG_105 = -DDEVELOP5
+#             FLAG_101 ?= -DDEVELOP1
+#             FLAG_102 ?= -DDEVELOP2
+#             FLAG_103 ?= -DDEVELOP3
+#             FLAG_104 ?= -DDEVELOP4
+#             FLAG_105 ?= -DDEVELOP5
 
 #--------------------------------------------------------------------------
 #        SELECT COMPILER/PLATFORM SPECIFIC DEFINITIONS
@@ -510,122 +495,57 @@ dashL= $(empty) -L
 #--------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------
-#        COMPAQ/ALPHA Definitions
-#--------------------------------------------------------------------------
-#        COMPILER   = -DCOMPAQ
-#        CPP        = /bin/cpp
-#        FC         = f90
-#        DEBFLGS    =  # -check bounds -check overflow -g 
-#        OPT        =  -fast -arch ev6 -fpe1
-#--------------------------------------------------------------------------
-#  CRAY Definitions         
-#--------------------------------------------------------------------------
-#         COMPILER = -DCRAY 
-#         CPP      = /opt/ctl/bin/cpp
-#         FC       = f90
-#         DEBFLGS  =  
-#         OPT      =
-#--------------------------------------------------------------------------
-#   Linux/Portland Group Definitions 
-#--------------------------------------------------------------------------
-#         CPP      = /usr/bin/cpp
-#         COMPILER =  
-#         FC       = pgf90
-#         DEBFLGS  = -Mbounds -g -Mprof=func
-#         OPT      = #-fast  -Mvect=assoc,cachesize:512000,sse  
-#--------------------------------------------------------------------------
 #  Intel Compiler Definitions
 #--------------------------------------------------------------------------
-#         CPP      = /usr/bin/cpp
-#         COMPILER = -DIFORT
-#         FC       = ifort
-#         CC       = icc
-#         CXX      = icc
-#         CFLAGS   = -O3
-#         DEBFLGS  = #-check all
+#         CPP      ?= /usr/bin/cpp
+#         COMPILER ?= -DIFORT
+#         FC       ?= ifort
+         FC       = mpiifort
+#         CC       ?= icc
+#         CXX      ?= icc
+#         CFLAGS   ?= -O3
+#         DEBFLGS  ?= #-check all
 # Use 'OPT = -O0 -g' for fast compile to test the make 
 # Use 'OPT = -xP' for fast run on em64t (Hydra and Guppy)
 # Use 'OPT = -xN' for fast run on ia32 (Salmon and Minke)
-#         OPT      = -O0 -g  
-#         OPT      = -xP 
+#         OPT      ?= -O0 -g  
+#         OPT      ?= -xP 
 
 # Do not set static for use with visit!
-#         VISOPT   = -Wl,--export-dynamic
-#         LDFLAGS  = $(VISITLIBPATH)
+#         VISOPT   ?= -Wl,--export-dynamic
+#         LDFLAGS  ?= $(VISITLIBPATH)
 #--------------------------------------------------------------------------
 #  Intel/MPI Compiler Definitions (SMAST)      
 #--------------------------------------------------------------------------
          CPP      = /usr/bin/cpp
-         COMPILER = -DIFORT  
-         CC       = mpicc
-         CXX      = mpicxx
+         COMPILER = -DMPIIFORT  
+#         CC       ?= mpicc
+#         CXX      ?= mpicxx
          CFLAGS   = -O3 -fPIC 
-         FC       = mpif90
-#         DEBFLGS  = -check all -traceback
+#         FC       ?= mpif90
+#         DEBFLGS  ?= -check all -traceback
 # Use 'OPT = -O0 -g'  for fast compile to test the make 
 # Use 'OPT = -xP' for fast run on em64t (Hydra and Guppy)
 # Use 'OPT = -xN' for fast run on ia32 (Salmon and Minke)
-#         OPT      = -O0 -g
-#         OPT      = -axN -xN
+#         OPT      ?= -O0 -g
+#         OPT      ?= -axN -xN
          OPT      = -O3
 
 # Do not set static for use with visit!
-#         VISOPT   = -Wl,--export-dynamic
-#         LDFLAGS  =  $(VISITLIBPATH)
-#--------------------------------------------------------------------------
-#  gfortran defs 
-#--------------------------------------------------------------------------
-#         CPP      = /usr/bin/cpp 
-#         COMPILER = -DGFORTRAN
-#         FC       = gfortran  -O3 
-#         DEBFLGS  = 
-#         OPT      = 
-#         CLIB     = 
-#--------------------------------------------------------------------------
-#  absoft / mac os x defs
-#--------------------------------------------------------------------------
-#         CPP      = /usr/bin/cpp 
-#         COMPILER = -DABSOFT  
-#         FC       = f90  -O3  -lU77
-#         DEBFLGS  = 
-#         OPT      = 
-#         CLIB     = 
-#--------------------------------------------------------------------------
-#  IBM/AIX Definitions
-#--------------------------------------------------------------------------
-#         COMPILER = -DAIX 
-#         CPP      = /usr/local/bin/cpp
-#         FC       = mpxlf90 -qsuffix=f=f90
-#         DEBFLGS  =  # -qcheck -C -g
-#         OPT      = -O -qarch=pwr4 -qtune=pwr4  -bmaxdata:0x80000000 -qhot -qmaxmem=8096
-#--------------------------------------------------------------------------
-#  APPLE OS X/XLF Definitions (G5)
-#--------------------------------------------------------------------------
-#         COMPILER = -DAIX
-#         CPP      = /usr/bin/cpp
-#         FC       =  /opt/ibmcmp/xlf/8.1/bin/xlf90 -qsuffix=f=f90
-#         DEBFLGS  =  # -qcheck -C -g
-#         OPT      = -O5 -qarch=g5 -qtune=g5  -qhot -qmaxmem=8096 -qunroll=yes -Wl,-stack_size,10000000
-#--------------------------------------------------------------------------
-#  OTHER                   
-#--------------------------------------------------------------------------
-#         COMPILER =
-#         CPP      = 
-#         FC       = 
-#         DEBFLGS  = 
-#         OPT      = 
+#         VISOPT   ?= -Wl,--export-dynamic
+#         LDFLAGS  ?=  $(VISITLIBPATH)
 #==========================================================================
 #  END USER DEFINITION SECTION
 #==========================================================================
-         CPPFLAGS = $(DEF_FLAGS) $(COMPILER) -fPIC
-         FFLAGS = $(DEBFLGS) $(OPT) -fPIC
-         MDEPFLAGS = --cpp --fext=f90 --file=-
-         RANLIB = ranlib
+         CPPFLAGS ?= $(DEF_FLAGS) $(COMPILER) -fPIC
+         FFLAGS ?= $(DEBFLGS) $(OPT) -fPIC
+         MDEPFLAGS ?= --cpp --fext=f90 --file=-
+         RANLIB ?= ranlib
          AR = ar rc
 #--------------------------------------------------------------------------
 #  CAT Preprocessing Flags
 #--------------------------------------------------------------------------
-           CPPARGS =  $(CPPFLAGS) $(DEF_FLAGS) $(FLAG_1) $(FLAG_2) \
+           CPPARGS ?=  $(CPPFLAGS) $(DEF_FLAGS) $(FLAG_1) $(FLAG_2) \
    $(FLAG_3) $(FLAG_4) $(FLAG_5) $(FLAG_6)  \
    $(FLAG_7) $(FLAG_8) $(FLAG_9) $(FLAG_10) \
    $(FLAG_11) $(FLAG_12) $(FLAG_13) $(FLAG_14) \
@@ -638,15 +558,17 @@ dashL= $(empty) -L
    $(FLAG_39) $(FLAG_40) $(FLAG_41) $(FLAG_42) \
    $(FLAG_43) $(FLAG_LAM)\
    $(FLAG_101) $(FLAG_102) $(FLAG_103) $(FLAG_104) $(FLAG_105)\
-   $(FLAG_211) $(FLAG_212) $(FLAG_213) $(FLAG_251) $(FLAG_261)
+   $(FLAG_211) $(FLAG_212) $(FLAG_213) $(FLAG_251) $(FLAG_261)\
+   $(CPP_MISC)
+
 #--------------------------------------------------------------------------
 #  Libraries           
 #--------------------------------------------------------------------------
 
-            LIBS  =	$(LIBDIR) $(CLIB)  $(PARLIB) $(IOLIBS)	$(DTLIBS)\
+            LIBS  ?=	$(LIBDIR) $(CLIB)  $(PARLIB) $(IOLIBS)	$(DTLIBS)\
 			$(MPILIB) $(GOTMLIB) $(KFLIB) $(BIOLIB)	\
 			$(OILIB) $(VISITLIB) $(PROJLIBS) $(PETSC_LIB)
 
-            INCS  = 	$(INCDIR) $(IOINCS) $(GOTMINCS) $(BIOINCS)\
+            INCS  ?= 	$(INCDIR) $(IOINCS) $(GOTMINCS) $(BIOINCS)\
 			 $(VISITINCPATH) $(PROJINCS) $(DTINCS) \
 			 $(PETSC_FC_INCLUDES)

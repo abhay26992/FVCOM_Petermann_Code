@@ -428,7 +428,7 @@ SUBROUTINE INTERNAL_STEP
   !   update thick thickness with rate of change of upper and lower surface 
   !   provided by FISOC,needs to be updated to a more advanced formula
 
-       ZISF      =  ZISF-(ISF_DDDT+ISF_DSDT)*DTI*RHO_isf/RHO_on
+       ZISF      =  ZISF-(ISF_DDDT-ISF_DSDT)*DTI*RHO_isf/RHO_on
 
 # else
         ZISF      =  ZISF-ISF_DDDT*DTI
@@ -438,7 +438,7 @@ SUBROUTINE INTERNAL_STEP
          ZISF=ZISF-M_W*DTI
 # endif        !  FISOC_DRAFT
          CALL   ISF_JUDGE
-         CALL   WET_JUDGE
+         CALL   WET_JUDGE 
          D   =  H + EL-ZISF
          DT  =  H + ET-ZISF
          WHERE (D<=MIN_DEPTH)  D  =  MIN_DEPTH

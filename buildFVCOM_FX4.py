@@ -13,11 +13,14 @@ BuildPreReq = False
 BuildFVCOM = True
 #BuildFVCOM = False
 
+COLD = "/projappl/project_2000339/"
+
 prereq_install_dir =  "/projappl/project_2000339/installs/FVCOM_external/"
 install_dir =  "/projappl/project_2000339/installs/FVCOM_FX4/"
 
 prereq_dir =  "/projappl/project_2000339/source/fvcom4_fisoc/FVCOM_source/libs/"
 source_dir =  "/projappl/project_2000339/source/fvcom4_fisoc/FVCOM_source/"
+
 prereq_makefile_name = "makefile.puhti"
 make_inc_name = "make.inc.puhti"
 makefile_name = "makefile.api"
