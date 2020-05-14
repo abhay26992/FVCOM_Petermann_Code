@@ -232,7 +232,11 @@ MODULE MOD_WD
      DTMP = H(I) + ELF(I)  - QTHICE(I)
 #   else
 #     if defined (ICESHELF)
-       DTMP = H(I) + ELF(I) - ZISF(I)
+#       if defined (ISOMIP)
+         DTMP = H(I)-ZISF(I)
+#       else
+         DTMP = H(I) + ELF(I) - ZISF(I)
+#       endif
 #     else
        DTMP = H(I) + ELF(I)
 #     endif
@@ -252,9 +256,15 @@ MODULE MOD_WD
              MAX(QTHICE(NV(I,1)),QTHICE(NV(I,2)),QTHICE(NV(I,3)))      !!yding
 #  else
 #  if defined (ICESHELF)
-     DTMP =  MAX(ELF(NV(I,1)),ELF(NV(I,2)),ELF(NV(I,3)))  + &
+#     if defined (ISOMIP)
+        DTMP =  MIN( H(NV(I,1))-ZISF(NV(I,1)),H(NV(I,2))-ZISF(NV(I,2)),&
+              H(NV(I,3))-ZISF(NV(I,3)))
+#    else
+        DTMP =  MAX(ELF(NV(I,1)),ELF(NV(I,2)),ELF(NV(I,3)))  + &
               MIN( H(NV(I,1))-ZISF(NV(I,1)),H(NV(I,2))-ZISF(NV(I,2)),&
               H(NV(I,3))-ZISF(NV(I,3)))
+  
+#    endif
 #   else
      DTMP =  MAX(ELF(NV(I,1)),ELF(NV(I,2)),ELF(NV(I,3)))  + &
              MIN(  H(NV(I,1)),  H(NV(I,2)),  H(NV(I,3)))
