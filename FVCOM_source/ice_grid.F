@@ -225,9 +225,9 @@
 
 #  if !defined (SPHERICAL) 
       !! 
-      write(nu_diag,*)'Please check the domain'
-      write(nu_diag,*)' and specify initial condiction for ICE MODEL'
-      call PSTOP
+!      write(nu_diag,*)'Please check the domain'
+!      write(nu_diag,*)' and specify initial condiction for ICE MODEL'
+!      call PSTOP
 !      ULAT(i,J)=90.0_SP/rad_to_deg !! Specify the latitude  !!yding
 
      
