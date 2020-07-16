@@ -448,6 +448,14 @@ SUBROUTINE INTERNAL_STEP
          CALL N2E2D(DT,DT1)
          CALL N2E2D(ZISF,ZISF1)
 # endif         ! ICEDRAFTMORPHY
+
+   ! set QPREC and QEVAP to zero in the ice shelf cavity
+    IF (PRECIPITATION_ON) THEN
+       WHERE (ISISFN ==1)  
+         QPREC = 0.0_SP
+         QEVAP = 0.0_SP
+       END WHERE
+    END IF
 # endif         ! ICESHELF
 
 # if defined (ICE)
