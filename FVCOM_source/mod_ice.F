@@ -47,6 +47,9 @@ MODULE MOD_ICE
    USE MOD_UTILS
    use mod_ice2d
 
+# if defined (ICESHELF)
+  USE MOD_ISF
+# endif
 !====================================================================
 !--------------------------------------------------------------
 !   for cice code
@@ -489,6 +492,12 @@ MODULE MOD_ICE
          sss  (i,j) = S1(I,1)
          Tf   (i,j) = -depressT*sss(i,j) ! freezing temp (C)
          Tf   (i,j) = max(Tf(i,j),-1.85) ! freezing temp (C)
+         !----- ice shelf, Qin, 15/07/2020
+          
+# if defined (ICESHELF)
+       IF(ISISFN(I)==1) Tf(i,j) = T1(I,1)
+#  endif
+        
 
          !--- atm states-
          zlvl (i,j) = c10i
