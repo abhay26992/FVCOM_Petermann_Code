@@ -516,7 +516,9 @@
       real (kind=dbl_kind), parameter :: &
          hsno_init = 0.20_dbl_kind  ! initial snow thickness (m)
 
+      ice_ic = 'none'
       if (trim(ice_ic) == 'none') then
+       
       ! Initialize grid with no ice.
       ! If restarting, these values are overwritten.
 
@@ -546,7 +548,7 @@
       enddo
 
       else ! ice_ic = 'default'
-
+      write(*,*) 'initilize with ice'
       ! initial category areas in cells with ice
       hbar = c3i  ! initial ice thickness with greatest area
                  ! Note: the resulting average ice thickness 
