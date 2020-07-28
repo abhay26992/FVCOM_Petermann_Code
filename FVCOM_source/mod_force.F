@@ -463,6 +463,7 @@ MODULE MOD_FORCE
 
   ! =================================================================
   ! ICE MODEL DATA
+# if defined (ICE)
   INTEGER :: ICE_FORCING_TYPE
 
   INTEGER,PARAMETER :: ICE_IS_WRFGRID     = 0
@@ -478,6 +479,7 @@ MODULE MOD_FORCE
   TYPE(NCVAR), POINTER :: ICE_SAT_N, ICE_SAT_P   ! SEA LEVEL AIR TEMPERATURE
   TYPE(NCVAR), POINTER :: ICE_SPQ_N, ICE_SPQ_P   ! SPECFIC HUMIDITY
   TYPE(NCVAR), POINTER :: ICE_CLD_N, ICE_CLD_P   ! CLOUD COVER
+# endif
  !==================================================================
 # if defined (ICESHELF)
   ! ICESHELF DRAFT DATA
@@ -721,8 +723,10 @@ CONTAINS
 # if defined (ICESHELF)
     IF(ICESHELF_DRAFT_VARYING)    CALL ICESHELF_DRAFT
 # endif
-    CALL ICE_MODEL_FORCING
 
+# if defined (ICE)
+    CALL ICE_MODEL_FORCING
+# endif
     IF(DBG_SET(DBG_SBR)) write(IPT,*) "END SETUP_FORCING"
   END SUBROUTINE SETUP_FORCING
   !================================================================
@@ -6643,7 +6647,7 @@ CONTAINS
     REAL(SP) :: TEMP
 
     CHARACTER(LEN=80)  :: ISTR
-    ISTR = "./"//TRIM(INPUT_DIR)//"/"//trim(casename)
+    ISTR  = trim(INPUT_DIR)//trim(CORIOLIS_FILE)
   
     IF(DBG_SET(DBG_SBR)) write(IPT,*) "START SURFACE_HEATING_CALCULATED"
 
@@ -6660,7 +6664,7 @@ CONTAINS
 !--------------READ IN LATITUDE------------------------------------------------!
 
    ALLOCATE(CORRG(0:MGL))  ; CORRG = 0.0_SP
-   CALL FOPEN(CORIOLISUNIT, TRIM(ISTR)//'_cor.dat',"cfr")
+   CALL FOPEN(CORIOLISUNIT, ISTR,"cfr")
    REWIND(CORIOLISUNIT)
    READ(CORIOLISUNIT,*)
    DO I=1,MGL
@@ -7346,7 +7350,7 @@ CONTAINS
     INTEGER :: cc_start,yy_start
 
     CHARACTER(LEN=80)  :: ISTR
-    ISTR = "./"//TRIM(INPUT_DIR)//"/"//trim(casename)
+     ISTR  = trim(INPUT_DIR)//trim(CORIOLIS_FILE)
   
     IF(DBG_SET(DBG_SBR)) write(IPT,*) "START SURFACE_HEATING_SOLAR"
 
@@ -7363,7 +7367,7 @@ CONTAINS
 !--------------READ IN LATITUDE------------------------------------------------!
 
    ALLOCATE(CORRG(0:MGL))  ; CORRG = 0.0_SP
-   CALL FOPEN(CORIOLISUNIT, TRIM(ISTR)//'_cor.dat',"cfr")
+   CALL FOPEN(CORIOLISUNIT, ISTR,"cfr")
    REWIND(CORIOLISUNIT)
    READ(CORIOLISUNIT,*)
    DO I=1,MGL
@@ -7760,6 +7764,7 @@ CONTAINS
 # endif
   !==============================================================
   !================================================================
+# if defined (ICE)
   SUBROUTINE ICE_MODEL_FORCING
     IMPLICIT NONE
     ! SOME NC POINTERS
@@ -8315,6 +8320,7 @@ CONTAINS
 
     IF(DBG_SET(DBG_SBR)) write(IPT,*) "END ICE MODEL FORCING"
   END SUBROUTINE ICE_MODEL_FORCING
+# endif
   !================================================================
   !================================================================
 # if defined (ICESHELF)
@@ -15571,6 +15577,7 @@ CONTAINS
 # endif  
   !==============================================================================|
   !==============================================================================|
+# if defined (ICE)
   SUBROUTINE UPDATE_ICE(NOW,SAT,SWV,SPQ,CLD)
     IMPLICIT NONE
     TYPE(TIME), INTENT(IN) :: NOW
@@ -15737,7 +15744,7 @@ CONTAINS
     END SELECT
 !===================================================
   END SUBROUTINE UPDATE_ICE
-
+# endif
 !==============================================================================|
 !==============================================================================|
 # if defined (ICESHELF)
