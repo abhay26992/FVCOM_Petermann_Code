@@ -36,7 +36,10 @@ MODULE MOD_ICE2D
   USE MOD_NORTHPOLE
   !#  endif
 #  endif
-  
+ 
+# if defined (ICESHELF)
+  use mod_isf,only:isisfc
+# endif 
 # if defined (MULTIPROCESSOR)
   USE MOD_PAR
 # endif
@@ -332,6 +335,13 @@ MODULE MOD_ICE2D
    DO I=1,N 
      UICE2(I) =UICE2(I)*ISICEC(I)
      VICE2(I) =VICE2(I)*ISICEC(I)
+# if defined (ICESHELF)
+       IF(ISISFC(I)==1) THEN
+          UICE2(I) = 0.0_SP
+          VICE2(I) = 0.0_SP
+       ENDIF
+# endif
+
    END DO
 #    if defined (MULTIPROCESSOR)
      IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,UICE2,VICE2)
@@ -610,6 +620,12 @@ end if !dwang
          END IF
          UICE2F(I) =UICE2F(I)*ISICEC(I)
          VICE2F(I) =VICE2F(I)*ISICEC(I)
+# if defined (ICESHELF)
+       IF(ISISFC(I)==1) THEN
+          UICE2F(I) = 0.0_SP
+          VICE2F(I) = 0.0_SP
+       ENDIF
+# endif
       END DO
       
       VICE2F(0) = VICE2FT
