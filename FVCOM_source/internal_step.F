@@ -464,7 +464,7 @@ SUBROUTINE INTERNAL_STEP
   
   IF(ICE_MODEL) THEN
      
-     IF(dbg_set(dbg_log))   WRITE(IPT,*)IINT, 'Calculating ICE'
+     !!IF(dbg_set(dbg_log))   WRITE(IPT,*)IINT, 'Calculating ICE'
      !!  the thermodynamics part are modified from CICE
      !!  the dynamics and advection part are use FVCOM-ice
      
@@ -472,9 +472,9 @@ SUBROUTINE INTERNAL_STEP
      !==================================================================
      ! UPDATE ICE FORCING
      !==================================================================
-     IF(DBG_SET(DBG_IO)) WRITE(IPT,*) "START UPDATE ICE FORCING"
+     !!IF(DBG_SET(DBG_IO)) WRITE(IPT,*) "START UPDATE ICE FORCING"
      CALL UPDATE_ICE(now=IntTime,SAT=T_AIR,SWV=DSW_AIR,SPQ=QA_AIR,CLD=CLOUD)
-     IF(DBG_SET(DBG_IO)) WRITE(IPT,*) "FINISHED UPDATE ICE FORCING"
+     !!IF(DBG_SET(DBG_IO)) WRITE(IPT,*) "FINISHED UPDATE ICE FORCING"
      
      CALL ICE_1D_2D
      
