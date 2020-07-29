@@ -492,13 +492,7 @@ MODULE MOD_ICE
          sss  (i,j) = S1(I,1)
          Tf   (i,j) = -depressT*sss(i,j) ! freezing temp (C)
          Tf   (i,j) = max(Tf(i,j),-1.85) ! freezing temp (C)
-         !----- ice shelf, Qin, 15/07/2020
-          
-# if defined (ICESHELF)
-       IF(ISISFN(I)==1) Tf(i,j) = T1(I,1)
-#  endif
-        
-
+ 
          !--- atm states-
          zlvl (i,j) = c10i
          Tair (i,j) = T_air(I) +Tffresh  !  ^0C--->"K"
@@ -511,6 +505,9 @@ MODULE MOD_ICE
 
          frzmlt(i,j) = (Tf(i,j)-sst(i,j))*cp_ocn*rhow*(D(I))*DZ(I,1)/dtice
          frzmlt(i,j) = min(max(frzmlt(i,j),-c1000),c1000)
+# if defined (ICESHELF)
+         IF(ISISFN(I)==1) frzmlt(i,j) = 0.0_SP
+# endif
 
          if (sst(i,j) <= Tf(i,j)) then
             sst(i,j) = Tf(i,j)
@@ -887,6 +884,9 @@ MODULE MOD_ICE
        IMASS(I) = (RHOI*VICE(I,1) + RHOS*VSNO(I,1)) ! kg/m^2
        IF (IMASS(I) >p01) ISICEN(I) =1
        END IF
+# if defined (ICESHELF)
+     IF(ISISFN(I)==1) ISICEN(I) = 0
+# endif
      END DO
 
 # if defined (MULTIPROCESSOR)
@@ -912,6 +912,10 @@ MODULE MOD_ICE
       IF(sum(ISICEN(NV(I,1:3))) > 0 .and.IMASS1(I)>p01  &
          .and. AIU(I)>P001) &
       ISICEC(i)=1
+# if defined (ICESHELF)
+     IF(ISISFC(I)==1) ISICEC(I) = 0
+# endif
+
    END DO
 
    Deallocate(AICETMP)
@@ -940,13 +944,14 @@ MODULE MOD_ICE
 
       !!  DYNAMICS FOR SEA ICE
        DO KICE=1,NDYN_DT  !!  sub loop for ice model
-       CALL ICE_RUNGE_KUTTA
+          CALL ICE_RUNGE_KUTTA
+ 
 !!===================================================================
       !-----------------------------------------------------------------
       ! Make sure state variables are not too close to zero.
       !-----------------------------------------------------------------
-
-      call check_state
+ 
+         call check_state
 
       !-----------------------------------------------------------------
       ! fill work arrays with fields to be advected
@@ -1008,6 +1013,7 @@ MODULE MOD_ICE
 #endif
 
        call ICE_ADV_fvcom(Irbuf,UICE2,VICE2)
+
 # if defined (MULTIPROCESSOR)
        if (PAR) CALL NODE_MATCH(1,NBN,BN_MLT,BN_LOC,BNC,MT,1,MYID,NPROCS,Irbuf)
        IF (PAR) CALL AEXCHANGE(NC,MYID,NPROCS,Irbuf) 
@@ -1110,9 +1116,12 @@ MODULE MOD_ICE
          END IF
       enddo
 !
-     call ridge_ice(Delta,divu) ! ridging
-
+       call ridge_ice(Delta,divu) ! ridging
+  
       ENDDO  !! KTICE  sub loop for ice dynamics
+
+     
+
 
       call zap_small_areas     ! remove categories with very small areas
       if (ncat > 1) call rebin ! make sure thicknesses are in bounds
