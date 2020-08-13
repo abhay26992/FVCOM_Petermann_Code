@@ -140,7 +140,7 @@ SUBROUTINE VDIF_TS(NCON1,F)
         SWRADF(1:M)=SWRAD(1:M)
         SASURF=0.0_SP
 
-#    if !defined (ICE) || !defined(ICESHELF)
+#    if !defined (ICE) && !defined(ICESHELF)
 !
 !-----------------------------------------------------------------------
 !  If net heat flux is cooling and SST is at freezing point or below
