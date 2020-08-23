@@ -204,6 +204,9 @@ SUBROUTINE CNTRL_PRMTRS
      END IF
 #    endif    
 
+# if defined (ICE)
+    IF(ICE_MODEL)  ITHRD  = ICE_THRESHOLD 
+# endif
 #  if defined (ICESHELF)
       IF(ICESHELF_MODEL)  THEN
          DRDZ    =   ICESHELF_DRDZ

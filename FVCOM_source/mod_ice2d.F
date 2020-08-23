@@ -294,7 +294,7 @@ MODULE MOD_ICE2D
     IMASS1 =0.0_SP
 
    DO I=1,M 
-      IF (AICE(I,1) >p001) then
+      IF (AICE(I,1) >ITHRD) then
       IMASS(I) = (RHOI*VICE(I,1) + RHOS*VSNO(I,1)) ! kg/m^2
       IF(IMASS(I) >P01)  ISICEN(I) =1
 # if defined (ICESHELF)
@@ -327,7 +327,7 @@ MODULE MOD_ICE2D
    
    DO I=1,N !T
       IF(sum(ISICEN(NV(I,1:3))) > 1 .and.IMASS1(I)>p01  &
-         .and. AIU(I)>P001) &
+         .and. AIU(I)>ITHRD) &
       ISICEC(i)=1
 # if defined (ICESHELF)
      IF(ISISFC(I)==1) ISICEC(I) = 0

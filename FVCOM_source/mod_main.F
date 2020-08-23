@@ -842,6 +842,8 @@ MODULE CONTROL
     REAL(SP) ::ICE_CLOUD_COVER
     REAL(SP) ::ICE_SHORTWAVE
     CHARACTER(LEN=80) ICE_LONGWAVE_TYPE
+    REAL(SP) :: ICE_THRESHOLD !! an empirical value of ice mass for judging if
+                               ! the ice mask is 1 or 0  
     
     LOGICAL HIGH_LATITUDE_WAVE
 
@@ -858,7 +860,8 @@ MODULE CONTROL
     REAL(SP) :: DRDZ
     REAL(SP) :: GAMA_T
     REAL(SP) :: ISFCBC
-
+    REAL(SP) :: ITHRD 
+ 
 
     !ADDITIONAL MODEL DATA
     INTEGER            :: N_SED
@@ -930,6 +933,7 @@ MODULE CONTROL
          & ICE_SPEC_HUMIDITY,             &
          & ICE_SHORTWAVE,                 &
          & ICE_LONGWAVE_TYPE,             &
+         & ICE_THRESHOLD,                 &
          & ICE_CLOUD_COVER,               &
          & HIGH_LATITUDE_WAVE,            &
          & ICESHELF_MODEL,                &
