@@ -194,6 +194,8 @@ MODULE MOD_ISF
    USE ALL_VARS
    USE MOD_PAR
 
+  USE MOD_WD, ONLY: ISWETN
+
  IMPLICIT NONE
     
     INTEGER :: I,K,J
@@ -279,6 +281,9 @@ MODULE MOD_ISF
    MLTFRZ(I)=C_w*SQRT(CD_top*(U2_W(I)+U_tide*U_tide))*GAMA_T*(T_w(I)-T_b(I))*RHO_sw
    M_w(I)=MLTFRZ(I)/(L_isf*RHO_fw)  ! melt rate 
 
+# if defined(WET_DRY)
+  IF(ISWETN(I) == 0) M_w(I) = 0.0_sp
+# endif
  ! heat flux
   
    NHF_isf(I)=(MLTFRZ(I)+RHO_fw*C_w*M_w(I)*(T_w(I)-T_b(I)))/SPRO      ! dividing SPRO to match the WTSURF, WTSURF is changed sign before vdif_ts is called
