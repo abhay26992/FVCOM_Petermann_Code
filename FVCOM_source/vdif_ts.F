@@ -54,10 +54,6 @@ SUBROUTINE VDIF_TS(NCON1,F)
   USE MOD_ISF
 #  endif
 
-#  if defined (WET_DRY)
-  USE MOD_WD
-#  endif
-
 # if defined (THIN_DAM)
   USE MOD_DAM,only : NODE_DAM1_N,NODE_DAM2_N,NODE_DAM3_N&
                       &,I_NODE_DAM1_N,I_NODE_DAM2_N,I_NODE_DAM3_N,KDAM

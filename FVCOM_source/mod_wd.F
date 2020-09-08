@@ -29,10 +29,6 @@
 MODULE MOD_WD
 
    USE MOD_PREC
-# if defined (ICESHELF)
-   USE MOD_ISF
-# endif
-
    IMPLICIT NONE
    SAVE
 !
