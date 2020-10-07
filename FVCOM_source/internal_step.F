@@ -688,8 +688,13 @@ SUBROUTINE INTERNAL_STEP
    CALL N2E2D(EL,EL1)
 
    !UPDATE DEPTH AND VERTICALLY AVERAGED VELOCITY FIELD
+# if defined (ICESHELF)
+   D   = H + EL-ZISF
+   D1  = H1 + EL1-ZISF1
+# else 
    D   = H + EL
    D1  = H1 + EL1
+# endif
    DTFA = D
 
 #  endif
