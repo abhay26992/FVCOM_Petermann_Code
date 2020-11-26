@@ -185,6 +185,9 @@ option(ENABLE_DYE_RELEASE "DYE_RELEASE" OFF)
 #--------------------------------------------------------------------------
 
 option(ENABLE_SEDIMENT "SEDIMENT" OFF)
+option(ENABLE_ORIG_SED  "ORIG_SED" OFF)
+option(ENABLE_CSTMS_SED  "CSTMS_SED" OFF)
+option(ENABLE_FLUID_MUD  "FLUID_MUD" OFF)
 option(ENABLE_OFFLINE_SEDIMENT "OFFLINE_SEDIMENT" OFF)
 option(ENABLE_RRKF "RRKF" OFF)
 option(ENABLE_ENKF "ENKF" OFF)
@@ -261,12 +264,6 @@ option(ENABLE_WAVE_OFFLINE "WAVE_OFFLINE" OFF)
 option(ENABLE_THIN_DAM "THIN_DAM" OFF)
 
 #--------------------------------------------------------------------------
-#        TVD - FLUX LIMITED HORIZONTAL ADVECTION
-#--------------------------------------------------------------------------
-
-option(ENABLE_TVD "TVD" OFF)
-
-#--------------------------------------------------------------------------
 #        PWP MIXED LAYER MODEL:
 #--------------------------------------------------------------------------
 
@@ -284,7 +281,7 @@ option(ENABLE_LIMITER_VER_ADV "LIMITER_VER_ADV" OFF)
 #        If your PETSc is 2.3.2 or older, uncomment this flag
 #--------------------------------------------------------------------------
 
-option(ENABLE_OLD_PETSC "OLD_PETSC" ON)
+option(ENABLE_OLD_PETSC "OLD_PETSC" OFF)
 
 #--------------------------------------------------------------------------
 #        DEVELOPMENT FLAGS
@@ -311,10 +308,60 @@ option(ENABLE_SALTLAKE "SALTLAKE" OFF)
 
 option(ENABLE_FABM "FABM" OFF)
 
+#--------------------------------------------------------
+# Dynamic/Thermodynamic IceShelf
+#---------------------------------------------------------
+option(ENABLE_ICESHELF "Enable the ICESHELF interface" OFF)
+option(ENABLE_ISOMIP "Enable the ISOMIP interface" OFF)
+option(ENABLE_ICEDRAFTMORPHY "Enable the ICEDRAFTMORPHY interface" OFF)
+
+#-----------------------------------------------------------------------
+#  For FISOC coupling
+#-----------------------------------------------------------------------
+option(ENABLE_FVCOM_API "Enable the FVCOM_API  interface" OFF)
+option(ENABLE_FISOC_DRAFT "Enable the FISOC DRAFT  interface" OFF)
+option(ENABLE_FISOC_DDDT  "Enable the FISOC DDDT  interface" OFF)
+option(ENABLE_FISOC_DSDT  "Enable the FISOC DSDT  interface" OFF)
+#-------------------------------------------------------------------------
+#       TVD HORIZONATL ADVECTION
+#-------------------------------------------------------------------------
+
+option(ENABLE_TVD "TVD" OFF)
+
+
 include(UseGlobalBuildTree)
 include(ConfigCompilerFlags)
 
 # Definitions and setting for each option
+ if(ENABLE_ICESHELF)
+     add_definitions(-DICESHELF)
+ endif()
+
+ if(ENABLE_ISOMIP)
+     add_definitions(-DISOMIP)
+ endif()
+
+ 
+if(ENABLE_ICEDRAFTMORPHY)
+    add_definitions(-DICEDRAFTMORPHY)
+endif()
+
+if(ENABLE_FVCOM_API)
+     add_definitions(-DFVCOM_API)
+endif()
+
+if(ENABLE_FISOC_DRAFT)
+     add_definitions(-DFISOC_DRAFT)
+endif()
+
+if(ENABLE_FISOC_DDDT)
+     add_definitions(-DFISOC_DDDT)
+endif()
+
+if(ENABLE_FISOC_DSDT)
+     add_definitions(-DFISOC_DSDT)
+endif()
+
 
 if(ENABLE_DOUBLE_PRECISION)
     add_definitions(-DDOUBLE_PRECISION)
@@ -432,6 +479,19 @@ if(ENABLE_SEDIMENT)
     add_definitions(-DSEDIMENT)
 endif()
 
+if(ENABLE_ORIG_SED)
+    add_definitions(-DORIG_SED)
+endif()
+
+if(ENABLE_CSTMS_SED)
+    add_definitions(-DCSTMS_SED)
+endif()
+
+if(ENABLE_FLUID_MUD)
+    add_definitions(-DFLUID_MUD)
+endif()
+
+
 if(ENABLE_OFFLINE_SEDIMENT)
     add_definitions(-DOFFLINE_SEDIMENT)
 endif()
@@ -517,10 +577,6 @@ endif()
 
 if(ENABLE_THIN_DAM)
     add_definitions(-DTHIN_DAM)
-endif()
-
-if(ENABLE_TVD)
-    add_definitions(-DTVD)
 endif()
 
 if(ENABLE_PWP)
