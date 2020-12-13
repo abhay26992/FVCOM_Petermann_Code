@@ -1,4 +1,4 @@
-include(InstallRequiredSystemLibraries)
+#include(InstallRequiredSystemLibraries)
 
 string(TOLOWER ${PROJECT_NAME} CPACK_PACKAGE_NAME)
 
