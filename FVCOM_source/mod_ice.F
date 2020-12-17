@@ -432,7 +432,6 @@ MODULE MOD_ICE
 
        call init_state          ! initialize the ice state
 
-      dtice = dti
       IF(DBG_SET(DBG_LOG)) write(ipt,*)' ICE time step set to DTI dtice =' , dtice
       call ALLOC_UVICE
 
@@ -1080,7 +1079,7 @@ MODULE MOD_ICE
       J=1
       do i = 1,imt_local
           do ni=1,ncat
-           !IF(Tsfcn(i,j,ni) .le.T_air(I)) Tsfcn(i,j,ni) =T_air(i)
+           IF(Tsfcn(i,j,ni) .le.T_air(I)) Tsfcn(i,j,ni) =T_air(i)
           enddo
       enddo
 

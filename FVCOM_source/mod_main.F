@@ -844,7 +844,7 @@ MODULE CONTROL
     CHARACTER(LEN=80) ICE_LONGWAVE_TYPE
     REAL(SP) :: ICE_THRESHOLD !! an empirical value of ice mass for judging if
                                ! the ice mask is 1 or 0  
-    
+    REAL(SP) :: ICE_TIMESTEP !! ice timestep input from namelist 
     LOGICAL HIGH_LATITUDE_WAVE
 
    LOGICAL ICESHELF_MODEL
@@ -861,6 +861,7 @@ MODULE CONTROL
     REAL(SP) :: GAMA_T
     REAL(SP) :: ISFCBC
     REAL(SP) :: ITHRD 
+    REAL(SP) :: DTICE 
  
 
     !ADDITIONAL MODEL DATA
@@ -934,6 +935,7 @@ MODULE CONTROL
          & ICE_SHORTWAVE,                 &
          & ICE_LONGWAVE_TYPE,             &
          & ICE_THRESHOLD,                 &
+         & ICE_TIMESTEP,                  &
          & ICE_CLOUD_COVER,               &
          & HIGH_LATITUDE_WAVE,            &
          & ICESHELF_MODEL,                &

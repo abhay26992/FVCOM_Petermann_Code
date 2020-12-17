@@ -534,6 +534,7 @@ CONTAINS
     ICE_LONGWAVE_TYPE      = "'PW' or 'RM'" !PW -- longwave as in Parkinson and Washington (1979)
                                            !RM -- longwave, Rosati and Miyakoda, JPO 18, p. 1607 (1988)
     ICE_THRESHOLD          = 0.0
+    ICE_TIMESTEP           = 0.0
     ICESHELF_MODEL= .FALSE.
     ICESHELF_DRAFT_INI_FILE = trim(casename)//"_zisf_ini.nc"
     ICESHELF_DRDZ                    = 0.0

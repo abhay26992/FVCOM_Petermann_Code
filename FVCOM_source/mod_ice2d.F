@@ -51,7 +51,7 @@ MODULE MOD_ICE2D
   USE ICE_STATE
   USE ICE_MECHRED
   USE ICE_CONSTANTS
-  USE ICE_CALENDAR, only: dtice,dyn_dt,ndyn_dt,dtei
+  USE ICE_CALENDAR, only: dyn_dt,ndyn_dt,dtei
   
   IMPLICIT NONE
   SAVE
