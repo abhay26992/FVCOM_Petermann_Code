@@ -266,7 +266,8 @@ CONTAINS
 
     IF(RST_ON)THEN
        !IF(NC_RST%FTIME%NEXT_IO == IntTime .or.VISIT_CMD_DUMP) then
-       IF(abs(NC_RST%FTIME%NEXT_IO-IntTime)<0.1_SP*IMDTI .or.VISIT_CMD_DUMP) then
+       !IF(abs(NC_RST%FTIME%NEXT_IO-IntTime)<0.1_SP*IMDTI .or.VISIT_CMD_DUMP) then
+       IF(abs(NC_RST%FTIME%NEXT_IO-IntTime)<0.1_SP*IMDTI .or.FORCE_ARCHIVE) then
 
           VISIT_CMD_DUMP = .false.
           
@@ -533,7 +534,8 @@ CONTAINS
 !!$          NCF => ADD(NCF,TURBULENCE_FILE_OBJECT() )
        END IF
        
-       IF (NC_SURFACE_HEAT .and. HEATING_ON) THEN
+ !Qin      IF (NC_SURFACE_HEAT .and. HEATING_ON) THEN
+       IF (NC_SURFACE_HEAT) THEN
           NCF2 => SURFACE_HEATING_FILE_OBJECT()
           NCF => ADD(NCF,NCF2)
 !!$          NCF => ADD(NCF,SURFACE_HEATING_FILE_OBJECT() )
@@ -3807,7 +3809,8 @@ CONTAINS
 
     ! WTSURF - NET HEAT FLUX
     VAR  => NC_MAKE_AVAR(name='net_heat_flux',&
-         & values=WTSURF_WATTS, DIM1= DIM_node, DIM2= DIM_time)
+    !     & values=WTSURF_WATTS, DIM1= DIM_node, DIM2= DIM_time)
+         & values=WTSURF, DIM1= DIM_node, DIM2= DIM_time)
 
     ATT  => NC_MAKE_ATT(name='long_name',values='Surface Net Heat Flux') 
     VAR  => ADD(VAR,ATT)

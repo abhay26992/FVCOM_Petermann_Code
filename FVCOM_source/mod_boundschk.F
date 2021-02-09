@@ -109,17 +109,17 @@ module mod_boundschk
 
     !report the bounds
     if(boundschk_on)then
-      write(ipt,*)'bounds checking  :  on'
-      write(ipt,*)'checking interval: ',chk_interval
-      write(ipt,*)'veloc_mag_max    : ',veloc_mag_max
-      write(ipt,*)'zeta_mag_max     : ',zeta_mag_max
-      write(ipt,*)'temp_max         : ',temp_max
-      write(ipt,*)'temp_min         : ',temp_min
-      write(ipt,*)'salt_max         : ',salt_max
-      write(ipt,*)'salt_min         : ',salt_min
-#     if defined (WAVE_CURRENT_INTERACTION)
-      write(ipt,*)'hs_max           : ',hs_max   
-#     endif
+!      write(ipt,*)'bounds checking  :  on'
+!      write(ipt,*)'checking interval: ',chk_interval
+!      write(ipt,*)'veloc_mag_max    : ',veloc_mag_max
+!      write(ipt,*)'zeta_mag_max     : ',zeta_mag_max
+!      write(ipt,*)'temp_max         : ',temp_max
+!      write(ipt,*)'temp_min         : ',temp_min
+!      write(ipt,*)'salt_max         : ',salt_max
+!      write(ipt,*)'salt_min         : ',salt_min
+!#     if defined (WAVE_CURRENT_INTERACTION)
+!      write(ipt,*)'hs_max           : ',hs_max   
+!#     endif
 
       !allocate vlist
       nvars = 7

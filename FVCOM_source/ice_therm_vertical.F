@@ -806,7 +806,7 @@
 !
       real (kind=dbl_kind), parameter ::   &
          Tmin = -100._dbl_kind ! min allowed internal temperature (deg C)
-
+        
       integer (kind=int_kind) ::   & 
          i, j           & ! horizontal indices
       ,  ij             & ! horizontal index, combines i and j loops
@@ -880,6 +880,8 @@
       !-----------------------------------------------------------------
 
          Tsf(i,j)  = Tsfcn(i,j,ni)
+! Qin, forced it not to lower than T_air
+         IF(Tsf(i,j) .le.T_air(i)) Tsf(i,j) = T_air(i)   
          hin(i,j) = vicen(i,j,ni) / aicen(i,j,ni)
          hlyr(i,j) = hin(i,j) / real(nilyr,kind=dbl_kind)
          hsn(i,j) = vsnon(i,j,ni) / aicen(i,j,ni)
@@ -919,8 +921,8 @@
             i = indxi(ij)
             j = indxj(ij)
 
-            if (Tsn(i,j) > Tmax(i,j)) then ! allowing for roundoff error
-!               write(nu_diag,*) ' '
+!            if (Tsn(i,j) > Tmax(i,j)) then ! allowing for roundoff error
+!                write(nu_diag,*) ' '
 !               write(nu_diag,*) 'Starting thermo, Tsn > Tmax, cat',ni
 !               write(nu_diag,*) 'Tsn=',Tsn(i,j)
 !               write(nu_diag,*) 'Tmax=',Tmax(i,j)
@@ -930,7 +932,7 @@
 !               stoplabel = 'ice state at stop'
 !               call print_state(stoplabel,i,j)
 !               call abort_ice('vertical thermo: Tsn must be <= 0')
-            endif
+!            endif
             
          enddo                  ! ij
       endif                     ! tsno_high
@@ -1010,7 +1012,7 @@
                          ! as above for snow
             endif
 
-           IF (Tin(i,j,k) < Tmin)THEN
+           if (Tin(i,j,k) < Tmin) then
               !(Tin=Tmlt(k))
                eicen(i,j,ilyr1(ni)+k-1) =              &
                     (rhoi *cp_ocn*Tmlt(k)) &
@@ -1042,44 +1044,45 @@
       ! If Tin is out of bounds, print diagnostics and exit.
       !-----------------------------------------------------------------
      
-         if (tice_high) then
-            do ij = 1, icells
-               i = indxi(ij)
-               j = indxj(ij)
+ !        if (tice_high) then
+ !           do ij = 1, icells
+ !              i = indxi(ij)
+ !              j = indxj(ij)
 
-               if (Tin(i,j,k) > Tmax(i,j)) then
-!                  write(nu_diag,*) ' '
-!                  write(nu_diag,*) 'Starting thermo, T > Tmax, cat',&
-!                       ni,', layer',k                                 
-!                  write(nu_diag,*) 'Tin=',Tin(i,j,k),', Tmax=',Tmax(i,j)
-!                  write(nu_diag,*) 'istep1, my_task, i, j:',        &
-!                       istep1, my_task, i, j
-!                  write(nu_diag,*) 'qin',qin(i,j,k)
+ !              if (Tin(i,j,k) > Tmax(i,j)) then
+ !                 write(nu_diag,*) ' '
+ !                 write(nu_diag,*) 'Starting thermo, T > Tmax, cat',&
+ !                      ni,', layer',k                                 
+ !                 write(nu_diag,*) 'Tin=',Tin(i,j,k),', Tmax=',Tmax(i,j)
+ !                 write(nu_diag,*) 'istep1, my_task, i, j:',        &
+ !                      istep1, my_task, ngid(i), j
+ !                 write(nu_diag,*) 'qin',qin(i,j,k)
 !                  stoplabel = 'ice state at stop'
 !                  call print_state(stoplabel,i,j)
 !                  call abort_ice('vertical thermo: Tin must be <= Tmax')
-               endif
-               
-            enddo               ! ij
-         endif                  ! tice_high   
+ !              endif
+ !              
+ !           enddo               ! ij
+ !        endif                  ! tice_high   
 
          if (tice_low) then
             do ij = 1, icells
                i = indxi(ij)
                j = indxj(ij)
                
-!               if (Tin(i,j,k) < Tmin) then
-!                  write(nu_diag,*) ' '
-!                  write(nu_diag,*) 'Starting thermo T < Tmin, cat',  &
-!                       ni,', layer',k                                  
-!                  write(nu_diag,*) 'Tin =', Tin(i,j,k)                
-!                  write(nu_diag,*) 'Tmin =', Tmin                     
-!!                  write(nu_diag,*) 'istep1, my_task, i, j:',         &
-!                       istep1, my_task, i, j
+               if (Tin(i,j,k) < Tmin) then
+                  write(nu_diag,*) ' '
+                  write(nu_diag,*) 'Starting thermo T < Tmin, cat',  &
+                       ni,', layer',k                                  
+                  write(nu_diag,*) 'Tin =', Tin(i,j,k)                
+                  write(nu_diag,*) 'Tmin =', Tmin                     
+                  write(nu_diag,*) 'istep1, my_task, i, j:',         &
+                       istep1, my_task, i, j
+                 call pstop
 !                  stoplabel = 'ice state at stop'
 !                  call print_state(stoplabel,i,j)
 !                  call abort_ice('vertical_thermo: Tin must be > Tmin') 
-!               endif
+               endif
             enddo               ! ij
          endif                  ! tice_low
 
@@ -1341,6 +1344,12 @@
                endif
             enddo               ! ij
          endif
+! force it not lower than T_air
+     do ij = 1, icells
+         i = indxi(ij)
+         j = indxj(ij)
+        IF(Tsf(i,j) .le. T_air(i)) Tsf(i,j) = T_air(i)
+     enddo
 
       !-----------------------------------------------------------------
       ! Update radiative and turbulent fluxes and their derivatives

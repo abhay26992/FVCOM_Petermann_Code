@@ -681,7 +681,7 @@ MODULE MOD_ICE
          flh = lhcoef(i,j) * delq(i,j)
          fsh = shcoef(i,j) * delt(i,j)
 
-         WTSURF(I) = -(fsh + flh + flwup + flw(i,j)+swabs ) /SPRO 
+         WTSURF(I) = -(fsh + flh + flwup + flw(i,j)+swabs ) /SPRO
          SWRAD(I)  =  (C1i-albocn)*SWRAD(I)
        end do
      end do
@@ -924,14 +924,10 @@ MODULE MOD_ICE
       !-----------------------------------------------------------------
 
       call from_coupler        ! get updated info from flux couple
-
-      Call thermo_vertical     ! thermodynamic growth rates and fluxes
-
+      call thermo_vertical     ! thermodynamic growth rates and fluxes
       call to_coupler          ! collect/send data to flux coupler
-
       call thermo_itd          ! thermodynamics and associated itd changes
-
-!!===========================================================================!!
+!=======================================================================!!
 
 #  if defined (ONE_D_MODEL)
       call zap_small_areas     ! remove categories with very small areas
@@ -1063,7 +1059,7 @@ MODULE MOD_ICE
              if (vsnon(i,j,ni) < puny) vsnon(i,j,ni) =0.0_SP
 
              if (aicen(i,j,ni) > puny) then
-               Tsfcn(i,j,ni) = -works(i,narrays+4)/aicen(i,j,ni)
+               Tsfcn(i,j,ni) = -works(i,narrays+4)/ (aicen(i,j,ni))
              else
                 Tsfcn(i,j,ni) = Tf(i,j)
              endif
