@@ -288,7 +288,7 @@ MODULE MOD_ISF
   
    NHF_isf(I)=(MLTFRZ(I)+RHO_fw*C_w*M_w(I)*(T_w(I)-T_b(I)))/SPRO      ! dividing SPRO to match the WTSURF, WTSURF is changed sign before vdif_ts is called
    NSF_isf(I)=-(RHO_sw*SQRT(CD_top*(U2_W(I)+U_tide*U_tide))*GAMA_S+RHO_fw*M_w(I))*(S_w(I)-S_b(I)) ! ocean losing salt when melting
-   NSF_isf(I)=NSF_isf(I)/RHO_sw
+   NSF_isf(I)=NSF_isf(I)*0.001_SP     ! convert to kg/m^2/s
  
   ENDIF
 
