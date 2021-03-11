@@ -54,6 +54,10 @@ SUBROUTINE VDIF_TS(NCON1,F)
   USE MOD_ISF
 #  endif
 
+#  if defined (ICENUDGE)
+  USE MOD_ICENUDGE
+#  endif
+
 # if defined (THIN_DAM)
   USE MOD_DAM,only : NODE_DAM1_N,NODE_DAM2_N,NODE_DAM3_N&
                       &,I_NODE_DAM1_N,I_NODE_DAM2_N,I_NODE_DAM3_N,KDAM
@@ -136,34 +140,7 @@ SUBROUTINE VDIF_TS(NCON1,F)
         SWRADF(1:M)=SWRAD(1:M)
         SASURF=0.0_SP
 
-#    if !defined (ICE) && !defined(ICESHELF)
-!
-!-----------------------------------------------------------------------
-!  If net heat flux is cooling and SST is at freezing point or below
-!  then suppress further cooling. Note: net heat flux sign convention is that 
-!  positive (in FVCOM negitive - J. Qi) means heating the ocean (J Wilkin - ROMS).
-!-----------------------------------------------------------------------
-! 
-!  Below the surface heat flux WFSURF is ZERO if cooling AND
-!  the SST is cooler than the threshold.  The value is retained if
-!  warming.
-!
-!    WFTMP3 = 0      if SST warmer than threshold (WFTMP1) - change nothing
-!    WFTMP3 = 1      if SST colder than threshold (WFTMP1)
-!
-!    0.5*(WFTMP2+ABS(WFTMP2)) = 0                        if flux is warming
-!                             = WFSURF                   if flux is cooling 
-!
-        WFTMP1=-2.0_SP              ! nominal SST threshold to cease cooling
-        DO I=1,M
-          WFTMP2=WFSURF(I)
-          WFTMP3=0.5_SP*(1.0_SP+SIGN(1.0_SP,WFTMP1-F(I,1)))
-          WFSURF(I) = WFTMP2-WFTMP3*0.5_SP*(WFTMP2+ABS(WFTMP2))
-        END DO
-#    endif
 
-
-! Qin commented the overcooling stuff for  ICESHELF setup, it should have a better solution. 10/01/2019
         DO K = 1, KB
            DO I = 1, M
 #    if !defined (WET_DRY)
@@ -171,53 +148,11 @@ SUBROUTINE VDIF_TS(NCON1,F)
 #    else
               IF(ISWETN(I) == 1)THEN
 #    endif
-
-! Jadon: avoid overcooling or overheating in the region (depth<2m)
-!                 IF(D(I)<2.0_SP)THEN
-!                    WFSURF(I) = 0.0_SP
-!                    SWRADF(I) = 0.0_SP
-!                 END IF
-! Jadon: avoid overcooling or overheating in the region (depth<2m)
-
                  ZDEP = Z(I,K)*D(I)
-
-!       SPECIFIED PARAMETERS FOR ROSA/UK WATERS CASE (DECEMBER 2016)
-!                    IF(D(I) < 50.0_SP) THEN
-!                       RHEAT=0.65
-!                       ZETA1=1._SP
-!                       ZETA2=15.0_SP
-!                    ELSE IF(D(I) > 100.0_SP) THEN
-!                       RHEAT=0.58_SP
-!                       ZETA1=0.35_SP
-!                       ZETA2=23.0_SP
-!                    ELSE
-!                       TMP1=(D(I)-50.0_SP)/(100.0_SP-50.0_SP)
-!                       RHEAT=0.65_SP+(0.58_SP-0.65_SP)*TMP1
-!                       ZETA1=1._SP+ (0.35_SP-1._SP )*TMP1
-!                       ZETA2=15.0_SP+ (23.0_SP-15.0_SP )*TMP1
-!                    END IF
-
-! zlai: include the gom method to consider different surface heat penetration
-!                 IF(D(I) < 100.0_SP) THEN
-!                    RHEAT=0.78_SP
-!                    ZETA1=1.4_SP
-!                    ZETA2=6.3_SP
-!                 ELSE IF(D(I) > 150.0_SP) THEN
-!                    RHEAT=0.58_SP
-!                    ZETA1=0.35_SP
-!                    ZETA2=23.0_SP
-!                 ELSE
-!                    TMP1=(D(I)-100.0_SP)/(150.0_SP-100.0_SP)
-!                    RHEAT=0.78_SP+(0.58_SP-0.78_SP)*TMP1
-!                    ZETA1=1.4_SP+ (0.35_SP-1.4_SP )*TMP1
-!                    ZETA2=6.3_SP+ (23.0_SP-6.3_SP )*TMP1
-!                 END IF
-! zlai: include the gom method to consider different surface heat penetration
-
                  RAD(I,K)=SWRADF(I)*(RHEAT*EXP(ZDEP/ZETA1)+(1-RHEAT)*EXP(ZDEP/ZETA2))
 #    if defined (WET_DRY)
               END IF
-# endif
+#   endif
            END DO
         END DO
      END IF
@@ -239,17 +174,19 @@ SUBROUTINE VDIF_TS(NCON1,F)
   CASE(2)
 
      SWRADF   = 0.0_SP
+     WFSURF   =0.0_SP
+     COSGAMA1 =1.0_SP
 # if defined (ICESHELF)
 ! visual salt flux from ice shelf freezing 
-     WFSURF   =0.0_SP-NSF_isf(1:M)
-# else
-     WFSURF   =0.0_SP
+     WFSURF(1:M)   = WFSURF(1:M)-NSF_isf(1:M)
 # endif
-     COSGAMA1 =1.0_SP
+# if defined (ICENUDGE)
+     WFSURF(1:M)   = WFSURF(1:M)-FSALT(1:M)
+# endif 
 !---Considering the salinity conservation, the sea surface salinity flux-----!
 !---can be set as zero, that is----------------------------------------------!
      SASURF   = 0.0_SP
-     RAD      =0.0_SP
+     RAD      = 0.0_SP
 
   CASE DEFAULT
      CALL FATAL_ERROR('NCON NOT CORRECT IN VDIF_TS')

@@ -480,6 +480,12 @@ PROGRAM FVCOM
 # if defined (ICESHELF)
     USE MOD_ISF
 # endif
+
+! Added by Qin at Akvaplan-niva 2021
+# if defined (ICENUDGE)
+    USE MOD_ICENUDGE
+# endif
+
   
 # if defined (NH)
   USE NON_HYDRO

@@ -547,6 +547,16 @@ MODULE CONTROL
     REAL(SP) :: WAVE_PER_BOT
     REAL(SP) :: WAVE_UB_BOT
 
+    LOGICAL ICENUDGE_ON               
+    CHARACTER(LEN=80) ICENUDGE_FORCING_FILE    
+    CHARACTER(LEN=80) ICENUDGE_KIND
+    REAL(SP) :: ICENUDGE_AREA
+    REAL(SP) :: ICENUDGE_THICKNESS
+    REAL(SP) :: ICENUDGE_SALINITY
+    REAL(SP) :: ICENUDGE_VEL_X
+    REAL(SP) :: ICENUDGE_VEL_Y
+   
+
     ! FORCING KINDS
     CHARACTER(LEN=80),parameter:: CNSTNT   = "constant"
     CHARACTER(LEN=80),parameter:: STTC     = "static"
@@ -595,7 +605,16 @@ MODULE CONTROL
          & WAVE_DIRECTION,                  &
          & WAVE_PERIOD,                     &
          & WAVE_PER_BOT,                    &
-         & WAVE_UB_BOT  
+         & WAVE_UB_BOT,                     &
+         & ICENUDGE_ON,                     &   
+         & ICENUDGE_FORCING_FILE,           &
+         & ICENUDGE_KIND,                   &
+         & ICENUDGE_AREA,                   &
+         & ICENUDGE_THICKNESS,              &
+         & ICENUDGE_SALINITY,               &
+         & ICENUDGE_VEL_X,                  &
+         & ICENUDGE_VEL_Y     
+
 
     !--Parameters in NameList NML_RIVER_TYPE
     CHARACTER(LEN=80) RIVER_TS_SETTING ! METHOD TO CALCULATE T&S AT
@@ -1448,6 +1467,22 @@ MODULE ALL_VARS
    REAL(SP), ALLOCATABLE,TARGET :: WPER_BOT(:)     !!BOTTOM WAVE PERIOD
    REAL(SP), ALLOCATABLE,TARGET :: WUB_BOT(:)      !!BOTTOM ORBITAL VELOCITY
 
+# if defined (ICENUDGE)
+   REAL(SP), ALLOCATABLE,TARGET :: AICE(:)         !!ICENUDGE AREA
+   REAL(SP), ALLOCATABLE,TARGET :: AICEU(:)        !!ICENUDGE AREA on cell
+   REAL(SP), ALLOCATABLE,TARGET :: HICE(:)         !!ICENUDGE THICKNESS
+   REAL(SP), ALLOCATABLE,TARGET :: ISALT(:)        !!ICENUDGE SALINITY
+   REAL(SP), ALLOCATABLE,TARGET :: UICE(:)         !!ICENUDGE X-VELOCITY
+   REAL(SP), ALLOCATABLE,TARGET :: VICE(:)         !!ICENUDGE X-VELOCITY
+   REAL(SP), ALLOCATABLE,TARGET :: STROCNX(:)      !!ICE-OCEAN STRESS X
+   REAL(SP), ALLOCATABLE,TARGET :: STROCNY(:)      !!ICE-OCEAN STRESS Y
+   REAL(SP), ALLOCATABLE,TARGET ::  FRESH(:)       !!ICE-OCEAN FRESH WATER FLUX
+   REAL(SP), ALLOCATABLE,TARGET ::  FSALT(:)       !!ICE-OCEAN SALT  FLUX
+   REAL(SP), ALLOCATABLE,TARGET ::  FHEAT(:)       !!ICE-OCEAN HEAT  FLUX
+   REAL(SP), ALLOCATABLE,TARGET ::  FSWTHRU(:)       !!ICE-OCEAN SW THROUGH  FLUX
+
+# endif   
+
 # if defined (OFFLINE_SEDIMENT) || (OFFLINE_BIOLOGY)
    REAL(SP), ALLOCATABLE,TARGET :: OFFLINE_U(:,:)  !! OFFLINE U VELOCITY
    REAL(SP), ALLOCATABLE,TARGET :: OFFLINE_V(:,:)  !! OFFLINE V VELOCITY
@@ -1998,6 +2033,21 @@ CONTAINS
    ALLOCATE(WPER_BOT(0:MT))      ;WPER_BOT = ZERO
    ALLOCATE(WUB_BOT(0:MT))       ;WUB_BOT  = ZERO
 # endif
+
+# if defined (ICENUDGE)
+    ALLOCATE(AICE(0:MT))           ;AICE      = ZERO
+    ALLOCATE(AICEU(0:NT))          ;AICEU     = ZERO
+    ALLOCATE(HICE(0:MT))           ;HICE      = ZERO
+    ALLOCATE(ISALT(0:MT))          ;ISALT     = ZERO
+    ALLOCATE(UICE(0:NT))           ;UICE      = ZERO
+    ALLOCATE(VICE(0:NT))           ;VICE      = ZERO
+    ALLOCATE(STROCNX(0:NT))        ;STROCNX      = ZERO
+    ALLOCATE(STROCNY(0:NT))        ;STROCNY     = ZERO
+    ALLOCATE(FRESH(0:MT))          ;FRESH     = ZERO
+    ALLOCATE(FSALT(0:MT))          ;FSALT     = ZERO
+    ALLOCATE(FHEAT(0:MT))          ;FHEAT     = ZERO
+    ALLOCATE(FSWTHRU(0:MT))          ;FSWTHRU     = ZERO
+# endif 
 
 # if defined (OFFLINE_SEDIMENT) || (OFFLINE_BIOLOGY)
    ALLOCATE(OFFLINE_U(0:NT,KB) )    ;OFFLINE_U   = ZERO

@@ -41,6 +41,11 @@ SUBROUTINE INTERNAL_STEP
 # if defined (ICESHELF)
   USE MOD_ISF
 # endif
+
+# if defined (ICENUDGE)
+  USE MOD_ICENUDGE
+# endif
+
   USE MOD_NORTHPOLE
 # if defined (SEMI_IMPLICIT)
   USE MOD_SEMI_IMPLICIT
@@ -487,6 +492,11 @@ SUBROUTINE INTERNAL_STEP
      !----------------------------------------------------------------------------------!
 #endif
 
+# if defined (ICENUDGE)
+    IF(ICENUDGE_ON) THEN
+         CALL ICENUDGE_OCN
+    END IF	
+# endif 
 !==============================================================================!
 !  CALCULATE DISPERSION (GX/GY) AND BAROCLINIC PRESSURE GRADIENT TERMS         !
 !==============================================================================!
@@ -808,6 +818,30 @@ SUBROUTINE INTERNAL_STEP
          IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,WUSURF,WVSURF)
 #   endif
 # endif
+
+# if defined (ICENUDGE)
+ !     Surface stress
+       DO I=1,NT
+          IF(AICEU(I)>=1.0E-5_SP) THEN
+	    WUSURF(I) =WUSURF(I) *(1.0_SP-AICEU(I)) +STROCNX(I)*AICEU(I)*1.0E-3
+            WVSURF(I) =WVSURF(I) *(1.0_SP-AICEU(I)) +STROCNY(I)*AICEU(I)*1.0E-3
+          ENDIF  
+       END DO
+!   Surface eva+pre
+      DO I=1,MT
+          IF(AICE(I)>=1.0E-5_SP) THEN 
+           ! add fresh water flux to precipitation,
+          ! ignore the flux of vapor from ice to atmo due to sublimation & condensation
+           QEVAP(I)=(1-AICE(I))*QEVAP(I) 
+           QPREC(I)=(1-AICE(I))*QPREC(I)+AICE(I)*FRESH(I)*1.0E-3 ! 1.0E-3 is the freshwater density
+          ENDIF  
+      END DO
+		
+#   if defined (MULTIPROCESSOR)
+        IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,WUSURF,WVSURF)
+        IF(PAR)CALL AEXCHANGE(NC,MYID,NPROCS,QEVAP,QPREC)
+#   endif
+#   endif
 
 # endif
 !end !defined (TWO_D_MODEL)

@@ -59,7 +59,6 @@
 #  if defined (SEDIMENT)
    USE MOD_SED
 #  endif
-
 #  if defined (HEATING_CALCULATED) || (HEATING_CALCULATED_GL)
    USE MOD_HEATFLUX, ONLY : HEATING_CALCULATE_ON
 #  endif
@@ -631,6 +630,12 @@
       IF (WAVE_ON) THEN
          CALL UPDATE_WAVE(IntTime,WHS,WDIR,WPER,WLENGTH,WPER_BOT,WUB_BOT)
       END IF
+# endif
+
+# if defined (ICENUDGE)
+     IF (ICENUDGE_ON) THEN
+        CALL UPDATE_ICENUDGE(IntTime,AICE,HICE,ISALT,UICE,VICE)
+     END IF
 # endif
 # if defined (OFFLINE_SEDIMENT)
       CALL UPDATE_OFFLINE_FORCING(IntTime,offline_u,  offline_v, offline_w&
