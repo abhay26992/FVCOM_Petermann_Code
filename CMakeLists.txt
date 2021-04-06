@@ -315,6 +315,11 @@ option(ENABLE_ICESHELF "Enable the ICESHELF interface" OFF)
 option(ENABLE_ISOMIP "Enable the ISOMIP interface" OFF)
 option(ENABLE_ICEDRAFTMORPHY "Enable the ICEDRAFTMORPHY interface" OFF)
 
+#--------------------------------------------------------
+# Dynamic/Thermodynamic IceNudge
+#---------------------------------------------------------
+option(ENABLE_ICENUDGE "Enable the ICENUDGE interface" OFF)
+
 #-----------------------------------------------------------------------
 #  For FISOC coupling
 #-----------------------------------------------------------------------
@@ -360,6 +365,10 @@ endif()
 
 if(ENABLE_FISOC_DSDT)
      add_definitions(-DFISOC_DSDT)
+endif()
+
+if(ENABLE_ICENUDGE)
+     add_definitions(-DICENUDGE)
 endif()
 
 

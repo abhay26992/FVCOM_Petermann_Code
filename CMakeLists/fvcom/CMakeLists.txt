@@ -48,6 +48,7 @@ ${srcdir}/ice_therm_itd.F
 ${srcdir}/mod_ice2d.F
 ${srcdir}/mod_ice.F
 ${srcdir}/mod_isf.F
+${srcdir}/mod_icenudge.F
 ${srcdir}/mod_startup.F
 ${srcdir}/mod_wqm.F
 ${srcdir}/mod_ncdio.F
