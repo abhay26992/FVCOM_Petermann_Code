@@ -146,24 +146,16 @@ SUBROUTINE EXTERNAL_STEP
 #  endif
 
 # if defined (ICENUDGE)
- !     Surface stress
+    ! ice-ocean stress
+	   CALL ICENUDGE_STRESS
        DO I=1,NT
           IF(AICEU(I)>=1.0E-5_SP) THEN
             WUSURF2(I) =WUSURF2(I) *(1.0_SP-AICEU(I)) -STROCNX(I)*AICEU(I)*1.0E-3
             WVSURF2(I) =WVSURF2(I) *(1.0_SP-AICEU(I)) -STROCNY(I)*AICEU(I)*1.0E-3
           ENDIF  
        END DO
-!   Surface eva+pre
-      DO I=1,MT
-          IF(AICE(I)>=1.0E-5_SP) THEN 
-            QEVAP2(I)=(1-AICE(I))*QEVAP2(I) 
-            QPREC2(I)=(1-AICE(I))*QPREC2(I)+AICE(I)*FRESH(I)*1.0E-3  ! 1.0E-3 is density of the fresh water
-          ENDIF  
-      END DO
-		
 #   if defined (MULTIPROCESSOR)
         IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,WUSURF,WVSURF)
-	IF(PAR)CALL AEXCHANGE(NC,MYID,NPROCS,QEVAP2,QPREC2)
 #   endif
 
 # endif

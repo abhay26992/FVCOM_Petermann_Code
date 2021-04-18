@@ -159,13 +159,13 @@ SUBROUTINE VDIF_TS(NCON1,F)
 
 
 # if defined (ICESHELF)
-     DO I=1,M
+     DO I=1,M 
 ! Set the radiation and net heat flux to zero beneath the ice shelf
       IF(ISISFN(I)==1) THEN
         SWRADF(I)=0.0_SP
         WFSURF(I)=0.0_SP
         RAD(I,:) =0.0_SP  
-      END IF 
+      END IF
      END DO
    WFSURF(1:M)=WFSURF+NHF_isf(1:M)
 # endif
@@ -180,8 +180,8 @@ SUBROUTINE VDIF_TS(NCON1,F)
 ! visual salt flux from ice shelf freezing 
      WFSURF(1:M)   = WFSURF(1:M)-NSF_isf(1:M)
 # endif
-# if defined (ICENUDGE)
-     WFSURF(1:M)   = WFSURF(1:M)-FSALT(1:M)
+# if defined (ICENUDGE) 
+     WFSURF(1:M)   = WFSURF(1:M)-FVSALT1(1:M) -FVSALT2(1:M)
 # endif 
 !---Considering the salinity conservation, the sea surface salinity flux-----!
 !---can be set as zero, that is----------------------------------------------!

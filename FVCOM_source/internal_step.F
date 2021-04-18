@@ -381,6 +381,7 @@ SUBROUTINE INTERNAL_STEP
 ! end defined semi-implicit && nh
 
   !----SPECIFY THE SURFACE FORCING OF INTERNAL MODES-----------------------------!
+
 # if defined (GCN)
   CALL BCOND_GCN(8,0)
 #   else
@@ -492,11 +493,6 @@ SUBROUTINE INTERNAL_STEP
      !----------------------------------------------------------------------------------!
 #endif
 
-# if defined (ICENUDGE)
-    IF(ICENUDGE_ON) THEN
-         CALL ICENUDGE_OCN
-    END IF	
-# endif 
 !==============================================================================!
 !  CALCULATE DISPERSION (GX/GY) AND BAROCLINIC PRESSURE GRADIENT TERMS         !
 !==============================================================================!
@@ -820,26 +816,17 @@ SUBROUTINE INTERNAL_STEP
 # endif
 
 # if defined (ICENUDGE)
- !     Surface stress
+ !     Surface ice-ocean stress
+      CALL ICENUDGE_STRESS
        DO I=1,NT
-          IF(AICEU(I)>=1.0E-5_SP) THEN
-	    WUSURF(I) =WUSURF(I) *(1.0_SP-AICEU(I)) +STROCNX(I)*AICEU(I)*1.0E-3
+         IF(AICEU(I)>=1.0E-5_SP) THEN
+	        WUSURF(I) =WUSURF(I) *(1.0_SP-AICEU(I)) +STROCNX(I)*AICEU(I)*1.0E-3
             WVSURF(I) =WVSURF(I) *(1.0_SP-AICEU(I)) +STROCNY(I)*AICEU(I)*1.0E-3
           ENDIF  
        END DO
-!   Surface eva+pre
-      DO I=1,MT
-          IF(AICE(I)>=1.0E-5_SP) THEN 
-           ! add fresh water flux to precipitation,
-          ! ignore the flux of vapor from ice to atmo due to sublimation & condensation
-           QEVAP(I)=(1-AICE(I))*QEVAP(I) 
-           QPREC(I)=(1-AICE(I))*QPREC(I)+AICE(I)*FRESH(I)*1.0E-3 ! 1.0E-3 is the freshwater density
-          ENDIF  
-      END DO
 		
 #   if defined (MULTIPROCESSOR)
         IF(PAR)CALL AEXCHANGE(EC,MYID,NPROCS,WUSURF,WVSURF)
-        IF(PAR)CALL AEXCHANGE(NC,MYID,NPROCS,QEVAP,QPREC)
 #   endif
 #   endif
 
@@ -1385,7 +1372,6 @@ SUBROUTINE INTERNAL_STEP
      IF(PAR)CALL NODE_MATCH(1,NBN,BN_MLT,BN_LOC,BNC,MT,KB,MYID,NPROCS,TF1)
 #     endif
 
-
 #    if defined (SEMI_IMPLICIT)
      T1 = TSC
 #    endif
@@ -1395,6 +1381,12 @@ SUBROUTINE INTERNAL_STEP
 #   endif
         !end !defined (ONE_D_MODEL)                                    !                          !
 
+#   if defined (ICENUDGE)
+    
+    CALL ICENUDGE_THERMODYN1
+	
+#   endif		
+		
      IF(CASENAME(1:3) == 'gom')THEN
         CALL VDIF_TS_GOM(1,TF1)
      ELSE  
@@ -1415,31 +1407,8 @@ SUBROUTINE INTERNAL_STEP
        CALL SET_VAR(intTime,T1=TF1)
      END IF
 
-!!$!QXU{
-!!$#  if defined (SST_GRID_ASSIM)
-!!$      IF(ASSIM_FLAG==0 .AND. .NOT. SST_ASSIM_GRD)CALL TEMP_NUDGING
-!!$      IF(ASSIM_FLAG==1 .AND. SST_ASSIM_GRD)CALL TEMP_NUDGING
-!!$#  else
-!!$      IF(ASSIM_FLAG==0 .AND. .NOT. SST_ASSIM)CALL TEMP_NUDGING
-!!$      IF(ASSIM_FLAG==1 .AND. SST_ASSIM)CALL TEMP_NUDGING
-!!$#  endif
-!!$!QXU}
-     
 
-#    if defined (DATA_ASSIM)
-!!    CALL TEMP_ASSIMILATION                              !Temperature Assimilation        !
-!     IF(TS_NGASSIM .OR. TS_OIASSIM)THEN
-!      IF(ASSIM_FLAG==0 .AND. .NOT. SST_ASSIM)CALL TEMP_NUDGING
-!      IF(ASSIM_FLAG==1 .AND. SST_ASSIM)CALL TEMP_NUDGING
-!     END IF
-#    endif
-
-#    if defined (DATA_ASSIM_OI)
-!     IF(TS_OIASSIM.AND.MOD(IINT,TS_NSTEP_OI).EQ.0)THEN
-!      IF(ASSIM_FLAG==0 .AND. .NOT. SST_OIASSIM)CALL TEMP_OI
-!      IF(ASSIM_FLAG==1 .AND. SST_OIASSIM)CALL TEMP_OI
-!     END IF
-#    endif
+ 
 
 #    if defined (DATA_ASSIM)
      IF(TS_NGASSIM .OR. (TS_OIASSIM .AND. MOD(IINT,TS_NSTEP_OI) == 0))THEN
@@ -1450,9 +1419,6 @@ SUBROUTINE INTERNAL_STEP
      END IF
 #    endif
 
-!     IF(NESTING_ON )THEN
-!       CALL SET_VAR(intTime,T1=TF1)
-!     END IF
 
 #   if !defined (ONE_D_MODEL)
 !J. Ge for tracer advection
@@ -1501,7 +1467,11 @@ SUBROUTINE INTERNAL_STEP
      IF(SCALAR_POSITIVITY_CONTROL) CALL FCT_S       !Conservation Correction   !
      !#                                                   endif
 #   endif
-     !end !defined (ONE_D_MODEL)                                    !                          !
+     !end !defined (ONE_D_MODEL)   
+     	 
+#   if defined (ICENUDGE)
+    CALL ICENUDGE_THERMODYN2
+#   endif
 
      IF(CASENAME(1:3) == 'gom')THEN
         CALL VDIF_TS_GOM(2,SF1)
@@ -1523,20 +1493,6 @@ SUBROUTINE INTERNAL_STEP
        CALL SET_VAR(intTime,S1=SF1)
      END IF
 
-#   if defined (DATA_ASSIM)
-!!    CALL SALT_NUDGING                              !Nudge Salinity            !
-!     IF(TS_ASSIM)THEN
-!      IF(ASSIM_FLAG==0 .AND. .NOT. SST_ASSIM)CALL SALT_NUDGING
-!      IF(ASSIM_FLAG==1 .AND. SST_ASSIM)CALL SALT_NUDGING
-!     END IF
-#   endif
-
-#   if defined (DATA_ASSIM_OI)
-!     IF(TS_OIASSIM.AND.MOD(IINT,TS_NSTEP_OI).EQ.0)THEN
-!       IF(ASSIM_FLAG==0 .AND. .NOT. SST_OIASSIM)CALL SALT_OI
-!       IF(ASSIM_FLAG==1 .AND. SST_OIASSIM)CALL SALT_OI
-!     END IF
-#   endif
 
 #   if defined (DATA_ASSIM)
      IF(TS_NGASSIM .OR. (TS_OIASSIM .AND. MOD(IINT,TS_NSTEP_OI) == 0))THEN
@@ -1546,10 +1502,6 @@ SUBROUTINE INTERNAL_STEP
           .OR. TSGRD_ASSIM))CALL SALT_ASSIMILATION
      END IF
 #   endif
-
-!     IF(NESTING_ON )THEN
-!       CALL SET_VAR(intTime,S1=SF1)
-!     END IF
 
 #   if !defined (ONE_D_MODEL)
 !J. Ge for tracer advection

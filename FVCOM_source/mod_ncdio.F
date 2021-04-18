@@ -688,7 +688,7 @@ CONTAINS
 # endif
 
 ! mainly for the purpose of diagnostics
-#  if defined (ICENUDGE)
+#  if defined (ICENUDGE_DIAGNOSIS)
         NCF2 => ICENUDGE_DATA_STATE_FILE_OBJECT()
         NCF => ADD(NCF,NCF2)
 # endif
@@ -5618,12 +5618,12 @@ CONTAINS
 
     NCF  => ADD(NCF,VAR)
 	
-		   ! ICE FRESHWATER FLUX
+		   ! ICE VIRTUAL SALT FLUX
 
-    VAR  => NC_MAKE_AVAR(name='FRESH',&
-         & values=FRESH, DIM1= DIM_node, DIM2= DIM_time)
+    VAR  => NC_MAKE_AVAR(name='FVSALT1',&
+         & values=FVSALT1, DIM1= DIM_node, DIM2= DIM_time)
 
-    ATT  => NC_MAKE_ATT(name='long_name',values='freshwater flux')
+    ATT  => NC_MAKE_ATT(name='long_name',values='virtual salt flux from melting')
     VAR  => ADD(VAR,ATT)
 
     ATT  => NC_MAKE_ATT(name='standard_name',values='freshwater flux')
@@ -5644,12 +5644,12 @@ CONTAINS
     NCF  => ADD(NCF,VAR)
 
 
- 		   ! ICE SALT FLUX
+ 		   ! ICE VIRTUAL SALT FLUX
 
-    VAR  => NC_MAKE_AVAR(name='FSALT',&
-         & values=FSALT, DIM1= DIM_node, DIM2= DIM_time)
+    VAR  => NC_MAKE_AVAR(name='FVSALT2',&
+         & values=FVSALT2, DIM1= DIM_node, DIM2= DIM_time)
 
-    ATT  => NC_MAKE_ATT(name='long_name',values='salt flux')
+    ATT  => NC_MAKE_ATT(name='long_name',values='virtual salt flux from freezing')
     VAR  => ADD(VAR,ATT)
 
     ATT  => NC_MAKE_ATT(name='standard_name',values='salt flux')
@@ -5719,6 +5719,110 @@ CONTAINS
     VAR  => ADD(VAR,ATT)
 
     NCF  => ADD(NCF,VAR)
+
+   ! Friction velocity u*
+     VAR  => NC_MAKE_AVAR(name='USTAR',&
+         & values=USTAR, DIM1= DIM_node, DIM2= DIM_time)
+
+    ATT  => NC_MAKE_ATT(name='long_name',values='friction velocity')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='standard_name',values='friction velocity')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='units',values='m/s')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='grid',values='fvcom_grid')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='coordinates',values=CoordVar)
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='type',values='data')
+    VAR  => ADD(VAR,ATT)
+
+    NCF  => ADD(NCF,VAR)
+
+
+
+   ! Surface freezing temperature
+
+    VAR  => NC_MAKE_AVAR(name='T_f',&
+         & values=T_f, DIM1= DIM_node, DIM2= DIM_time)
+
+    ATT  => NC_MAKE_ATT(name='long_name',values='Surface freezing temperature')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='standard_name',values='Surface freezing temperature')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='units',values='o^C')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='grid',values='fvcom_grid')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='coordinates',values=CoordVar)
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='type',values='data')
+    VAR  => ADD(VAR,ATT)
+
+    NCF  => ADD(NCF,VAR)
+
+     ! temporary upper layer salinity between melting and freezing
+
+    VAR  => NC_MAKE_AVAR(name='S_TMP',&
+         & values=S_TMP, DIM1= DIM_node, DIM2= DIM_time)
+
+    ATT  => NC_MAKE_ATT(name='long_name',values='Upper layer salinity')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='standard_name',values='Upper layer salinity')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='units',values='PSU')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='grid',values='fvcom_grid')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='coordinates',values=CoordVar)
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='type',values='data')
+    VAR  => ADD(VAR,ATT)
+
+    NCF  => ADD(NCF,VAR)
+
+      ! temporary temperature TF1
+
+     VAR  => NC_MAKE_AVAR(name='TF1',&
+         & values=TF1, DIM1= DIM_node, DIM2= DIM_siglay, DIM3 = DIM_time)
+
+
+    ATT  => NC_MAKE_ATT(name='long_name',values='Temporary temperature')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='standard_name',values='Temporary temperature')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='units',values='o^C')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='grid',values='fvcom_grid')
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='coordinates',values=CoordVar)
+    VAR  => ADD(VAR,ATT)
+
+    ATT  => NC_MAKE_ATT(name='type',values='data')
+    VAR  => ADD(VAR,ATT)
+
+    NCF  => ADD(NCF,VAR)
+
+
   END FUNCTION   ICENUDGE_DATA_STATE_FILE_OBJECT
 # endif
 
