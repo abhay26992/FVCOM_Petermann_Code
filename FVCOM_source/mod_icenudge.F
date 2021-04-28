@@ -99,6 +99,9 @@ MODULE MOD_ICENUDGE
 #   endif
 
   DO I = 1,NT
+# if defined (ICESHELF)
+    IF (ISISFC(I)==1) AICEU(I) = 0.0_SP
+# endif 
      IF(AICEU(I)>=1.0E-5_SP)  THEN	 
        vrel = rhow*Cw*sqrt((U(I,1) - UICE(I))**2 + (V(I,1) - VICE(I))**2)  ! m/s
        ! turning angle is oppsite in the northen and southern hemisphere
@@ -165,7 +168,10 @@ MODULE MOD_ICENUDGE
    !  compute basal melting
     SPRO = SPCP*rhow  
     DO I = 1,M
-        IF(AICE(I)>=1.0E-5_SP)  THEN
+# if defined (ICESHELF)
+      IF (ISISFN(I)==1) AICE(I) = 0.0_SP
+# endif
+     IF(AICE(I)>=1.0E-5_SP)  THEN
 				 
          ! SW penetrating thru ice into ocean, only visible components (28% direct and 24% diffuse) absorbed 
           ! in the ice interior or transmitted to the ocean & assume frsnow = 0
