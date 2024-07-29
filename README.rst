@@ -98,8 +98,8 @@ In this script, specify the ``SBATCH options``. Again, ensure that the ``RESULTD
 correctly specified. 
 
 The ``namelist files`` and ``input files`` required to conduct the subglacial discharge experiments are made publicly available via `Zenodo <10.5281/zenodo.12803094>`_. 
-Note that the ``INPUT_DIR = './input/',`` under ``&NML_IO`` implies that all the input files required to run the numerical experiment in question are 
-contained within a single ``input`` directory within the ``run`` directory ``~/fv4ice_runs/PF_Q_sg/exp_a``. Specifically, owing to the large file sizes, the 
+Note that ``INPUT_DIR = './input/',`` under ``&NML_IO`` in the ``namelist files`` implies that all the input files required to run the numerical experiment in question 
+are contained within a single ``input`` directory within the ``run`` directory ``~/fv4ice_runs/PF_Q_sg/exp_a``. Specifically, owing to the large file sizes, the 
 input files are stored in the ``projects`` directory (``/cluster/projects/your_project_id/your_directory_name``), and the ``run`` directory 
 (in the ``home`` directory) ``~/fv4ice_runs/PF_Q_sg/exp_a`` contains an ``input`` symlink. This, however, can be adjusted according to your preference.
 
