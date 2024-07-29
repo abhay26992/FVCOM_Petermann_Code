@@ -47,7 +47,7 @@ to your ``home`` directory and make the ``src`` point to your source code locati
 Prepare the experiment directory
 ..................................
 
-Create a new experiment directory (say ``fv4ice_runs``)::
+Create a new ``experiment`` directory (say ``fv4ice_runs``)::
 
   $ cd ~
   $ mkdir fv4ice_runs 
@@ -83,24 +83,24 @@ Running the numerical experiments
 ...................................
 
 Copy `fv3_run_slurm <https://github.com/abhay26992/FVCOM_Petermann_run_utils>`_ 
-to the experiment directory (``~/fv4ice_runs``). In this script, ensure that the 
-``RESULTDIR`` (and thus, ``JOBDIR``) are correctly specified.
+to the ``experiment`` directory (``~/fv4ice_runs``). In this script, ensure that 
+the ``RESULTDIR`` (and thus, ``JOBDIR``) are correctly specified.
 
-Create a run directory within ``experiment directory/experiment name``::
+Create a ``run`` directory within ``experiment directory/experiment name``::
 
   $ cd ~/fv4ice_runs/PF_Q_sg/
   $ mkdir exp_a
 
-This run directory contains a job submission script, and the start file (namelist file) and the input files for that run.
+This ``run`` directory contains a ``job submission script``, and the ``start file`` (``namelist file``) and the ``input files`` for that run.
 
-A job submission script template can be found `here  <https://github.com/abhay26992/FVCOM_Petermann_run_utils>`_. 
+A ``job submission script`` template can be found `here  <https://github.com/abhay26992/FVCOM_Petermann_run_utils>`_. 
 In this script, specify the ``SBATCH options``. Again, ensure that the ``RESULTDIR`` (and thus, ``JOBDIR``) are 
 correctly specified. 
 
-The namelist and input files required to conduct the subglacial discharge experiments are made publicly available via `Zenodo <10.5281/zenodo.12803094>`_. 
+The ``namelist files`` and ``input files`` required to conduct the subglacial discharge experiments are made publicly available via `Zenodo <10.5281/zenodo.12803094>`_. 
 Note that the ``INPUT_DIR = './input/',`` under ``&NML_IO`` implies that all the input files required to run the numerical experiment in question are 
-contained within a single ``input`` directory within the run directory ``~/fv4ice_runs/PF_Q_sg/exp_a``. Specifically, owing to the large file sizes, the 
-input files are stored in the ``projects`` directory (``/cluster/projects/your_project_id/your_directory_name``), and the run directory 
+contained within a single ``input`` directory within the ``run`` directory ``~/fv4ice_runs/PF_Q_sg/exp_a``. Specifically, owing to the large file sizes, the 
+input files are stored in the ``projects`` directory (``/cluster/projects/your_project_id/your_directory_name``), and the ``run`` directory 
 (in the ``home`` directory) ``~/fv4ice_runs/PF_Q_sg/exp_a`` contains an ``input`` symlink. This, however, can be adjusted according to your preference.
 
 Finally, the simulation is run as::
