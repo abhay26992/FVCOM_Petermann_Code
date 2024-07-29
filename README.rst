@@ -36,7 +36,7 @@ Clone the ``master`` branch (source code) of this repository into your ``home`` 
 Cmake 
 .......
 
-Copy the ``fvcom-cmake`` directory, i.e., the contents of the ``betzyfv4fisoc`` branch and make the ``src`` point to your source code location::
+Copy the ``fvcom-cmake`` directory to your ``home`` directory, i.e., the contents of the ``betzyfv4fisoc`` branch and make the ``src`` point to your source code location::
 
   $ cd ~
   $ cd ./fvcom-cmake
